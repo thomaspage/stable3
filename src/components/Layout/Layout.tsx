@@ -16,7 +16,7 @@ const Layout = ({}) => {
   } = useTranslation();
 
   const title = {
-    "/accomodations": t("pages.accomodations.path"),
+    "/listings": t("pages.listings.path"),
     "/schedule": t("pages.schedule.path"),
     "/rsvp": t("pages.rsvp.path"),
   }[pathname];

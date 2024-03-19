@@ -57,8 +57,8 @@ const Menu = ({}) => {
       },
     },
     {
-      pathname: "/accomodations",
-      label: t("pages.accomodations.path"),
+      pathname: "/listings",
+      label: t("pages.listings.path"),
       hearts: {
         version: 4,
         $height: 14,

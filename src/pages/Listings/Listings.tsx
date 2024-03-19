@@ -1,23 +1,44 @@
 import { Typography } from "@mui/material";
 import {
-  AccomodationsContainer,
+  ListingsContainer,
   Hotel,
   Hotels,
   HotelName,
   InlineFlex,
   MetroImg,
   WalkerImg,
-} from "./Accomodations.styles";
+} from "./Listings.styles";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import * as amplitude from "@amplitude/analytics-browser";
+import { gql, useQuery } from "@apollo/client";
 
-const Accomodations = ({}) => {
+const LISTINGS_QUERY = gql`
+{
+  listingCollection {
+    items {
+      sys {
+        id
+      }
+      # add the fields you want to query
+    }
+  }
+}
+`;
+
+const Listings = ({}) => {
   const { t } = useTranslation();
 
+  const { data, loading, error } = useQuery(LISTINGS_QUERY);
+
+  console.log("loading", loading);
+  console.log("data", data);
+  console.log("error", error)
+
+
   return (
-    <AccomodationsContainer>
-      <Typography>{t("pages.accomodations.message")}</Typography>
+    <ListingsContainer>
+      <Typography>{t("pages.listings.message")}</Typography>
 
       <Hotels>
         <Hotel>
@@ -76,8 +97,8 @@ const Accomodations = ({}) => {
           <Typography>5 min</Typography>
         </InlineFlex>
       </Hotel> */}
-    </AccomodationsContainer>
+    </ListingsContainer>
   );
 };
 
-export default Accomodations;
+export default Listings;

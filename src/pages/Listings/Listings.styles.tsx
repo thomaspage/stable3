@@ -1,7 +1,7 @@
 import { Typography } from "@mui/material";
 import { styled } from "styled-components";
 
-export const AccomodationsContainer = styled("div")({
+export const ListingsContainer = styled("div")({
   display: "flex",
   flexDirection: "column",
   gap: 30,

@@ -26,7 +26,7 @@
                 "7pm": "19h00",
                 "10pm": "22h00"
             },
-            "accomodations": {
+            "listings": {
                 "path": "Hébergement",
                 "message": "Nous n'avons pas réservé de bloc de chambres, alors n'hésitez pas à vous loger où vous le souhaitez ! Que vous trouviez un AirBnb génial dans Le Plateau ou un bel hôtel dans le Vieux-Montréal, la réception et la cérémonie sont à 5 minutes de marche de la station de métro McGill sur la ligne verte. Si vous préférez rester à proximité, vous trouverez ci-dessous quelques options d'hôtels à proximité."
             },

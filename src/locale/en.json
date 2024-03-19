@@ -26,8 +26,8 @@
                 "7pm": "7:00pm",
                 "10pm": "10:00pm"
             },
-            "accomodations": {
-                "path": "Accomodations",
+            "listings": {
+                "path": "Listings",
                 "message": "We have not reserved a block of rooms, so feel free to stay wherever you'd like! Whether you find a killer AirBnb in Le Plateau or a beautiful hotel in Vieux-Montréal, the venue is a short 5 minute walk from the McGill metro station on the green line. If you would rather stay close to the venue, some nearby hotel options can be found below."
             },
             "rsvp": {
