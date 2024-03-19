@@ -1,0 +1,77 @@
+{
+    "translation": {
+        "pages": {
+            "home": {
+                "path": "Home",
+                "title.1": "Max & Tom",
+                "title.2": "joyfully invite you",
+                "title.3": "to their wedding",
+                "title.4": "celebration.",
+                "day": "On Sunday,",
+                "date": "September 1, 2024",
+                "time": "5 o'clock in the afternoon",
+                "place": "Jatoba",
+                "address": "1184 Rue du Square-Phillips",
+                "city": "Montréal",
+                "dancing": "Dinner & dancing to follow"
+            },
+            "schedule": {
+                "path": "Schedule",
+                "ceremony": "Ceremony",
+                "cocktail": "Cocktail hour",
+                "dinner": "Dinner",
+                "dancing": "Dancing",
+                "5pm": "5:00pm",
+                "6pm": "6:00pm",
+                "7pm": "7:00pm",
+                "10pm": "10:00pm"
+            },
+            "accomodations": {
+                "path": "Accomodations",
+                "message": "We have not reserved a block of rooms, so feel free to stay wherever you'd like! Whether you find a killer AirBnb in Le Plateau or a beautiful hotel in Vieux-Montréal, the venue is a short 5 minute walk from the McGill metro station on the green line. If you would rather stay close to the venue, some nearby hotel options can be found below."
+            },
+            "rsvp": {
+                "path": "RSVP",
+                "guest": "Guest",
+                "guest1": "Guest One",
+                "guest2": "Guest Two",
+                "firstName": "First Name",
+                "lastName": "Last Name",
+                "dietaryRestrictions": "Dietary Restrictions",
+                "justMe": "It's just me",
+                "wellBeThere": "We'll be there",
+                "illBeThere": "I'll be there",
+                "notAttending": "Can't make it",
+                "submit": "Submit",
+                "infants": "While this is an 18+ event, we are able to accomodate nursing infants. Please let us know as soon as possible so that the proper arrangements can be made.",
+                "moreDetails": "more details",
+                "addToGoogle": "Add to Google Calendar",
+                "addToICal": "Add to iCal",
+                "rsvpMessageAttending": "Thank you for submitting your response, we can't wait to see you!",
+                "rsvpMessageNotAttending": "We'll miss you at the wedding, but hope to see you soon! Thank you for submitting your response.",
+                "rsvpMessageError": "There was an error submitting your RSVP. Please try again."
+            },
+            "secretDinner": {
+                "path": "Welcome Evening",
+                "firstName": "First Name",
+                "lastName": "Last Name",
+                "yes": "Yes",
+                "no": "No",
+                "cancel": "Cancel",
+                "submit": "Submit",
+                "attending": "Total Attending",
+                "rsvpMessageAttending": "Thank you for submitting your response, we can't wait to see you before the big day!",
+                "rsvpMessageNotAttending": "Wish you could make it, but we'll see you on the big day!",
+                "description": "Inviting all our friends old + new, near + far to meet and mingle at our place before the big day! Come join us for some dinner and an informal evening.",
+                "date": "FRIDAY, AUGUST 30",
+                "time": "7:00PM",
+                "location": "OUR PLACE",
+                "addToGoogle": "Add to Google Calendar",
+                "addToICal": "Add to iCal",
+                "canYouMakeIt": "Can you make it?",
+                "title1": "AN EVENING BEFORE",
+                "title2": "\"I DO\""
+            }
+        }
+    }
+}

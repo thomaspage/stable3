@@ -1,0 +1,64 @@
+{
+  "name": "stable3",
+  "version": "0.1.0",
+  "homepage": "https://stabl3.ca",
+  "private": true,
+  "dependencies": {
+    "@amplitude/analytics-browser": "^2.4.1",
+    "@mui/icons-material": "^5.15.12",
+    "@mui/lab": "^5.0.0-alpha.163",
+    "@mui/material": "^5.15.7",
+    "@mui/styled-engine-sc": "^6.0.0-alpha.14",
+    "@testing-library/jest-dom": "^5.17.0",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
+    "@types/jest": "^27.5.2",
+    "@types/node": "^16.18.79",
+    "@types/react": "^18.2.51",
+    "@types/react-dom": "^18.2.18",
+    "i18next": "^23.8.2",
+    "i18next-browser-languagedetector": "^7.2.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-i18next": "^14.0.2",
+    "react-router-dom": "^6.22.0",
+    "react-scripts": "5.0.1",
+    "styled-components": "^6.1.8",
+    "typescript": "^4.9.5",
+    "web-vitals": "^2.1.4"
+  },
+  "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "resolutions": {
+    "@mui/styled-engine": "npm:@mui/styled-engine-sc@latest"
+  },
+  "devDependencies": {
+    "@types/styled-components": "^5.1.34",
+    "file-loader": "^6.2.0",
+    "gh-pages": "^6.1.1"
+  }
+}
