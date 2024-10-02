@@ -6,43 +6,47 @@ import { Button, Container, Typography } from "@mui/material";
 export const MenuContainer = styled("div")<{ open: boolean }>(
   ({ theme, open }) => ({
     display: "flex",
-    flexDirection: "column",
-    alignItems: "flex-start",
-    width: 225,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    background: "rgba(123,212,50,0.1)",
+    // width: 225,
     zIndex: 1,
+    top: 0,
+    position: "sticky",
+    padding: 15,
 
-    [theme.breakpoints.down("md")]: {
-      position: "absolute",
+    // [theme.breakpoints.down("md")]: {
+      // position: "absolute",
       ...(open && {
-        position: "fixed",
+        // position: "fixed",
       }),
-      top: 15,
-      left: 15,
+      // top: 15,
+      // left: 15,
       pointerEvents: "none",
-    },
+    // },
   })
 );
 
 export const List = styled("div")<{ open: boolean }>(({ theme, open }) => ({
   flexGrow: 1,
 
-  position: "fixed",
   top: 0,
   bottom: 0,
   display: "flex",
-  flexDirection: "column",
   justifyContent: "center",
   backgroundColor: "white",
   alignItems: "flex-start",
 
   transition: "opacity 0.5s",
 
-  [theme.breakpoints.down("md")]: {
+  // [theme.breakpoints.down("md")]: {
+    position: "fixed",
     left: 0,
     right: 0,
     opacity: 0,
     pointerEvents: "none",
     padding: 50,
+    flexDirection: "column",
 
     ...(open && {
       pointerEvents: "auto",
@@ -51,7 +55,7 @@ export const List = styled("div")<{ open: boolean }>(({ theme, open }) => ({
     ...(!open && {
       transition: "opacity 0s",
     }),
-  },
+  // },
 }));
 
 export const ListItem = styled(NavLink)(({}) => ({
@@ -67,9 +71,9 @@ export const Hamburger = styled(Button)(
   z-index: 1;
   min-width: 0px;
 
-  ${theme.breakpoints.up("md")} {
-    display: none;
-  }
+  // ${theme.breakpoints.up("md")} {
+  //   display: none;
+  // }
 
   
 `

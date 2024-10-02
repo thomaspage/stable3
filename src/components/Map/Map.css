@@ -1,0 +1,58 @@
+
+
+
+.marker {
+    padding: 1px 5px;
+    background-color: white;
+    border-radius: 3px;
+    border: 1px solid black;
+    cursor: pointer;
+    box-shadow: 0 0 5px 0 rgba(0,0,0,0.2);
+    font-weight: bold;
+}
+
+.marker.active {
+    background-color: black;
+    color: white;
+    z-index: 1;
+}
+
+.marker:hover {
+    background-color: black;
+    color: white;
+}
+
+
+/* Dark Theme */
+.theme-dark .marker {
+    background-color: black;
+    color: white;
+    border: 1px solid white;
+}
+
+.theme-dark .marker.active {
+    background-color: white;
+    color: black;
+}
+
+.theme-dark .marker:hover {
+    background-color: white;
+    color: black;
+}
+
+
+
+
+/* General */
+
+.mapboxgl-control-container {
+    display: none;
+}
+
+.mapboxgl-popup {
+    z-index: 1;
+}
+
+.mapboxgl-popup-content {
+    padding: 0;
+}

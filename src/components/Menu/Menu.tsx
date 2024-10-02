@@ -12,6 +12,7 @@ import {
 } from "./Menu.styles";
 import { useTranslation } from "react-i18next";
 import * as amplitude from "@amplitude/analytics-browser";
+import LanguageSelector from "../LanguageSelector";
 
 const Menu = ({}) => {
   const [open, setOpen] = useState(false);
@@ -106,13 +107,17 @@ const Menu = ({}) => {
 
   return (
     <MenuContainer open={open}>
-      <Hamburger color="inherit" onClick={() => setOpen(!open)}>
-        <Buns>
-          <Patty open={open} />
-          <Patty open={open} />
-          <Patty open={open} />
-        </Buns>
-      </Hamburger>
+      <div style={{display: "flex", gap: 20, alignItems: "center", zIndex: 1}}>
+        <Hamburger color="inherit" onClick={() => setOpen(!open)}>
+          <Buns>
+            <Patty open={open} />
+            <Patty open={open} />
+            <Patty open={open} />
+          </Buns>
+        </Hamburger>
+
+        <div>stabl3 logo</div>
+      </div>
 
       <List open={open}>
         {routes.map((route, i) => {
@@ -128,6 +133,8 @@ const Menu = ({}) => {
           );
         })}
       </List>
+
+      <LanguageSelector />
     </MenuContainer>
   );
 };

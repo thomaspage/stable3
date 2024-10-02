@@ -6,6 +6,7 @@ import Content from "../Content";
 import LanguageSelector from "../LanguageSelector";
 import Menu from "../Menu";
 import { LayoutContainer, Title } from "./Layout.styles";
+import { useTheme } from "@mui/material";
 
 const Layout = ({}) => {
   const { pathname } = useLocation();
@@ -15,33 +16,24 @@ const Layout = ({}) => {
     i18n: { language },
   } = useTranslation();
 
-  const title = {
-    "/listings": t("pages.listings.path"),
-    "/schedule": t("pages.schedule.path"),
-    "/rsvp": t("pages.rsvp.path"),
-  }[pathname];
+  const theme = useTheme();
 
   useEffect(() => {
     amplitude.track("Page View", { pathname, language });
   }, [pathname]);
 
   return (
-    <LayoutContainer>
+    <LayoutContainer className={`theme-${theme.palette.mode}`}>
       {/* Menu */}
-      <Menu />
+      {/* <Menu /> */}
 
       {/* Content */}
       <Content>
-        <>
-          <Title sx={{ textAlign: pathname === "/schedule" ? "center" : "" }}>
-            {title}
-          </Title>
-          <Outlet />
-        </>
+        <Outlet />
       </Content>
 
-      {/* Lanugage Selector */}
-      <LanguageSelector />
+      {/* Lanugage Selector
+      <LanguageSelector /> */}
     </LayoutContainer>
   );
 };

@@ -1,5 +1,20 @@
 {
     "translation": {
+        "amenities": {
+            "washer": "Washer included",
+            "dryer": "Dryer included",
+            "dishwasher": "Dishwasher included",
+            "storage": "Storage locker",
+            "pets": "Small dogs allowed",
+            "oven": "Oven included",
+            "stove": "Stove included",
+            "refrigerator": "Refrigerator included",
+            "elevator": "Elevator in building",
+            "electricity": "Electricity included"
+        },
+        "common": {
+            "availableNow": "Available now"
+        },
         "pages": {
             "home": {
                 "path": "Home",

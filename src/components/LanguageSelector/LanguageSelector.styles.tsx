@@ -11,10 +11,10 @@ export const LanguageSelectorContainer = styled("div")(({ theme }) => ({
   // zIndex: 1,
 
   // [theme.breakpoints.down("md")]: {
-    position: "absolute",
-    top: 15,
-    right: 15,
-    pointerEvents: "none",
+    // position: "absolute",
+    // top: 15,
+    // right: 15,
+    // pointerEvents: "none",
   // },
 }));
 
