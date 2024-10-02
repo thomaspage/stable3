@@ -133,13 +133,13 @@ function App() {
         <Router>
           <Routes>
             <Route path="/" element={<Layout />}>
-              <Route index element={<Home />} />
+              <Route index element={<Navigate to="/listings" replace />} />
               <Route path="listings" element={<Listings />} />
               <Route path="listings/:id" element={<Listing />} />
 
               {/* Redirect to home */}
               {/* Replace with 404 */}
-              {/* <Route path="*" element={<Navigate to="/" replace />} /> */}
+              <Route path="*" element={<Navigate to="/listings" replace />} />
             </Route>
           </Routes>
         </Router>
