@@ -1,77 +1,18 @@
 {
     "translation": {
-        "pages": {
-            "home": {
-                "path": "Acceuil",
-                "title.1": "Max & Tom",
-                "title.2": "sont heureux de",
-                "title.3": "vous inviter à leur",
-                "title.4": "mariage.",
-                "day": "Le dimanche,",
-                "date": "1er septembre 2024",
-                "time": "17 heures de l'après-midi",
-                "place": "Jatoba",
-                "address": "1184 Rue du Square-Phillips",
-                "city": "Montréal",
-                "dancing": "S’ensuivront un repas et une soirée de folie"
-            },
-            "schedule": {
-                "path": "Programme",
-                "ceremony": "Cérémonie",
-                "cocktail": "Heure du cocktail",
-                "dinner": "Souper",
-                "dancing": "Party",
-                "5pm": "17h00",
-                "6pm": "18h00",
-                "7pm": "19h00",
-                "10pm": "22h00"
-            },
-            "listings": {
-                "path": "Hébergement",
-                "message": "Nous n'avons pas réservé de bloc de chambres, alors n'hésitez pas à vous loger où vous le souhaitez ! Que vous trouviez un AirBnb génial dans Le Plateau ou un bel hôtel dans le Vieux-Montréal, la réception et la cérémonie sont à 5 minutes de marche de la station de métro McGill sur la ligne verte. Si vous préférez rester à proximité, vous trouverez ci-dessous quelques options d'hôtels à proximité."
-            },
-            "rsvp": {
-                "path": "RSVP",
-                "guest": "Invité",
-                "guest1": "Premier invité",
-                "guest2": "Deuxième invité",
-                "firstName": "Prénom",
-                "lastName": "Nom de famille",
-                "dietaryRestrictions": "Restrictions alimentaires",
-                "justMe": "Je viendrai seul",
-                "wellBeThere": "Nous y seront",
-                "illBeThere": "J'y serai",
-                "notAttending": "Je ne pourrai pas y être",
-                "submit": "Envoyer",
-                "infants": "Bien qu'il s'agisse d'un événement réservé aux plus de 18 ans, les nourrissons sont les bienvenus. Veuillez nous en informer dès que possible pour que les arrangements soient faits.",
-                "moreDetails": "plus d'information",
-                "addToGoogle": "Ajoutez à votre Gooogle Calendar",
-                "addToICal": "Ajoutez à votre iCal",
-                "rsvpMessageAttending": "Merci pour votre réponse, nous sommes excités de vous voir!",
-                "rsvpMessageNotAttending": "Vous nous manquerez, mais nous espérons vous voir bientôt! Merci d'avoir envoyé votre réponse.",
-                "rsvpMessageError": "Il y a eu une erreur lors de la soumission de votre réponse. Veuillez réessayer."
-            },
-            "secretDinner": {
-                "path": "Soirée de Bienvenue",
-                "firstName": "Prénom",
-                "lastName": "Nom de famille",
-                "yes": "Oui",
-                "no": "Non",
-                "cancel": "Annuler",
-                "submit": "Envoyer",
-                "attending": "Total des invités",
-                "rsvpMessageAttending": "Merci pour votre réponse, nous sommes excités de vous voir!",
-                "rsvpMessageNotAttending": "Vous nous manquerez, mais nous nous reverrons au mariage!",
-                "description": "Nous invitons tous nos amis, anciens et nouveaux, proches et lointains, à se rencontrer chez nous avant le grand jour! Venez nous rejoindre pour un dîner et une soirée informelle.",
-                "date": "VENDREDI 30 AOÛT",
-                "time": "19h00",
-                "location": "CHEZ NOUS",
-                "addToGoogle": "Add to Google Calendar",
-                "addToICal": "Add to iCal",
-                "canYouMakeIt": "Serez-vous des nôtres?",
-                "title1": "UNE SOIRÉE AVANT",
-                "title2": "\"I DO\""
-            }
+        "common": {
+            "bed": "ch",
+            "bedroom": "chambre",
+            "bedrooms": "chambres",
+            "bath": "sdb",
+            "bathroom": "salle de bain",
+            "bathrooms": "salles de bain",
+            "details": "Détails de Location",
+            "sqft": "pi²",
+            "month": "mois",
+            "description": "Déscription",
+            "monthlyRent"   : "loyer mensuel",
+            "availableDate": "Disponible le {{date}}"
         }
     }
 }

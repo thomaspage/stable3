@@ -4,7 +4,7 @@ import Hamburger from "../../components/Hamburger";
 export const ListingsContainer = styled("div")({
   display: "flex",
   flexDirection: "column",
-  gap: 30,
+  // gap: 30,
   height: "100%"
   // maxWidth: 300,
   // width: "100%",
@@ -52,6 +52,8 @@ export const Sidebar = styled("div")<{open: boolean}>(({theme, open}) => ({
   maxWidth: "100%",
   padding: 20,
   flexShrink: 0,
+  display: "flex",
+  flexDirection: "column",
 
   [theme.breakpoints.down("sm")]: {
 
@@ -67,23 +69,46 @@ export const Sidebar = styled("div")<{open: boolean}>(({theme, open}) => ({
       display: "none",
     })
 
+  },
+
+  [theme.breakpoints.up("sm")]: {
+
+    ...(open ? {
+      background: theme.palette.background.default,
+      zIndex: 1,
+    } : {
+      display: "none",
+    })
+
   }
 
   
 }))
 
-export const View = styled("div")({
+export const View = styled("div")<{sidebarOpen: boolean}>(({sidebarOpen}) => ({
   flexBasis: 1000,
   flexGrow: 1,
   overflowY: "auto",
-  direction: "rtl",
-})
+  direction: sidebarOpen ? "rtl": "ltr",
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "flex-end",
+}))
 
 export const ViewInner = styled("div")({
   direction: "ltr",
   height: "100%",
   width: "100%",
 })
+
+export const FilterButton = styled(IconButton)(({theme}) => ({
+
+  backgroundColor: theme.palette.background.default,
+
+  [theme.breakpoints.down("sm")]: {
+    display: "none",
+  }
+}))
 
 export const SidebarButton = styled(IconButton)(({theme}) => ({
 
@@ -101,7 +126,37 @@ export const SidebarButton = styled(IconButton)(({theme}) => ({
 
 export const SidebarHamburger = styled(Hamburger)(({theme}) => ({
 
+  alignSelf: "flex-end",
   [theme.breakpoints.up("sm")]: {
     display: "none",
   }
 }))
+
+
+export const Logo = styled("img")({
+  height: 100,
+  margin: "10px",
+  // width: "100%",
+  // height: "100%",
+  // objectFit: "contain",
+  // aspectRatio: "3/2",
+  // border: "1px solid black",
+  // backgroundColor: "red",
+  //   borderRadius: 10,
+});
+
+export const HeaderContainer = styled("div")({
+  display: "flex",
+  flexDirection: "row",
+  justifyContent: "space-between",
+  alignItems: "center",
+});
+
+export const HeaderOptions = styled("div")({
+  display: "flex",
+  flexDirection: "row",
+  justifyContent: "space-between",
+  alignItems: "center",
+  padding: 20,
+  gap: 20,
+});

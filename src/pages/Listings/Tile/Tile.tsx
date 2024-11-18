@@ -13,6 +13,7 @@ const Tile = ({
   // description,
   availableDate,
   price,
+  bathrooms,
   bedrooms,
   // rating,
   // thumbnail,
@@ -30,8 +31,9 @@ TileProps) => {
 
   // Get available date
   const today = new Date();
-  const date = new Date(availableDate);
-  const formattedDate = date < today ? t("common.availableNow") : getMonth({ date, language });
+  const date = new Date(availableDate)
+  const utcDate = new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate())
+  const formattedDate = date < today ? t("common.availableNow") : formatDate({ date: utcDate, language });
 
   return (
     <TileContainer $active={active}>
@@ -51,12 +53,32 @@ TileProps) => {
 
       <TileContent>
         {title && <Title color="text">{title}</Title>}
-        {bedrooms && <Typography>{bedrooms} bedrooms</Typography>}
-        {squareFootage && <Typography>{squareFootage} {t("ft")}²</Typography>}
+        {!!(bedrooms || bathrooms) && (
+          <Typography>
+            {!!bedrooms && (
+              <span>
+                {bedrooms} {t("common.bed")}
+              </span>
+            )}
+            {!!(bedrooms && bathrooms )&& " / "}
+            {bathrooms && (
+              <span>
+                {bathrooms} {t("common.bath")}
+              </span>
+            )}
+
+            {!!(bedrooms || bathrooms) && " • "}
+            {squareFootage && (
+              <span>
+                {squareFootage} {t("common.sqft")}
+              </span>
+            )}
+          </Typography>
+        )}
 
         {price && (
           <Typography>
-            {formatCurrency({ amount: price, language })} {t("perMonth")}
+            {formatCurrency({ amount: price, language })} / {t("common.month")}
           </Typography>
         )}
       </TileContent>

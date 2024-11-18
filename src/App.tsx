@@ -67,13 +67,16 @@ const client = new ApolloClient({
 });
 
 function App() {
-  // const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
+  const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
 
-  const [mode, setMode] = useState<"light" | "dark">("light");
+  const [mode, setMode] = useState<"light" | "dark">(prefersDarkMode ? "light" : "light");
 
   const theme = createTheme({
     palette: {
       mode,
+      primary: {
+        main: "rgb(215,133,56)",
+      }
     },
     components: {
       MuiButtonBase: {
@@ -112,7 +115,7 @@ function App() {
         textTransform: "unset",
       },
       // fontFamily: [
-      //   // 'PPHatton',
+      //   'PPHatton',
       //   'serif',
       // ].join(",")
     },

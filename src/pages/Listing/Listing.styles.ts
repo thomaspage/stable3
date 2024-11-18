@@ -59,3 +59,43 @@ export const StyledImageList = styled(ImageList)(({ theme }) => ({
   display: "none"
 
 }));
+
+
+export const BodyContainer = styled('div')({
+  padding: 10,
+  display: "flex",
+  gap: 50,
+  flexWrap: "wrap",
+});
+
+
+export const DescriptionContainer = styled('div')({
+  flexBasis: 500,
+  flexGrow: 1,
+  flexShrink: 0,
+});
+
+export const AmenitiesContainer = styled('div')({
+  flexBasis: 300,
+});
+
+export const AmenityText = styled(Typography)(({ theme }) => ({
+  display: "flex",
+  flexDirection: "row",
+  // justifyContent: "space-between",
+  gap: 20,
+  alignItems: "center",
+}));
+
+export const HighlightsContainer = styled('div')({
+  padding: 10,
+});
+
+export const HightlightText = styled(Typography)(({ theme }) => ({
+  display: "flex",
+  flexDirection: "row",
+  // justifyContent: "space-between",
+  gap: 20,
+  alignItems: "center",
+  marginBottom: 5,
+}));

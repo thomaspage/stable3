@@ -9,4 +9,4 @@ export interface Image {
   };
 }
 
-export type Amenities = (typeof Amenities)[number];
+export type Amenity = (typeof Amenities)[number];

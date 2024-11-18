@@ -7,6 +7,7 @@ import {
   ToggleButtonGroup,
   Typography,
   useMediaQuery,
+  useTheme,
 } from "@mui/material";
 import {
   FiltersContainer,
@@ -20,6 +21,10 @@ import {
   ViewInner,
   SidebarButton,
   SidebarHamburger,
+  Logo,
+  HeaderContainer,
+  HeaderOptions,
+  FilterButton,
 } from "./Listings.styles";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -37,6 +42,8 @@ import ListIcon from "@mui/icons-material/List";
 import LanguageSelector from "../../components/LanguageSelector";
 import { Tune } from "@mui/icons-material";
 import Hamburger from "../../components/Hamburger";
+import logoDark from "../../assets/logoDark.png";
+import logoLight from "../../assets/logoLight.png";
 
 const LISTINGS_QUERY = gql`
   query (
@@ -50,6 +57,7 @@ const LISTINGS_QUERY = gql`
   ) {
     listingCollection(
       locale: $locale
+      order: availableDate_DESC
       where: {
         price_lte: $priceMax
         price_gte: $priceMin
@@ -76,6 +84,7 @@ const LISTINGS_QUERY = gql`
           lon
         }
         city
+        bathrooms
         bedrooms
         title
         squareFootage
@@ -101,6 +110,10 @@ const Listings = ({}) => {
     t,
     i18n: { language },
   } = useTranslation();
+  
+  const theme = useTheme();
+
+  const logo = theme.palette.mode === "dark" ? logoDark : logoLight;
 
   const savedView = localStorage.getItem("listingsView");
 
@@ -162,9 +175,32 @@ const Listings = ({}) => {
         stabl3
       </Typography> */}
 
-      {loading && <CircularProgress />}
+      <HeaderContainer>
+        <Logo src={logo} />
+        <HeaderOptions>
+          <LanguageSelector />
+
+          <FilterButton
+            color="primary"
+            size="medium"
+            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+          >
+            <Tune fontSize="medium" />
+          </FilterButton>
+
+          <ToggleButtonGroup value={view} exclusive onChange={handleViewChange}>
+            <ToggleButton value="list">
+              <ListIcon />
+            </ToggleButton>
+            <ToggleButton value="map">
+              <MapIcon />
+            </ToggleButton>
+          </ToggleButtonGroup>
+        </HeaderOptions>
+      </HeaderContainer>
+
       <ViewContainer>
-        <View>
+        <View sidebarOpen={isSidebarOpen}>
           <ViewInner>
             {view === "map" && (
               <MapContainer>
@@ -181,24 +217,27 @@ const Listings = ({}) => {
                         key={listing.sys.id}
                         item
                         xs={12}
-                        md={6}
+                        md={isSidebarOpen ? 6 : 4}
                         // lg={4}
-                        xl={4}
+                        xl={isSidebarOpen ? 4 : 3}
                         onMouseOver={() => setActiveListingId(null)}
                       >
                         <Tile
                           id={listing.sys.id}
                           availableDate={listing.availableDate}
                           title={listing.title}
+                          bathrooms={listing.bathrooms}
                           bedrooms={listing.bedrooms}
                           squareFootage={listing.squareFootage}
                           price={listing.price}
-                          images={listing.imagesCollection.items.filter((x: any) => x)}
+                          images={listing.imagesCollection.items.filter(
+                            (x: any) => x
+                          )}
                           active={activeListingId === listing.sys.id}
                         />
                       </Grid>
                     );
-                  })}
+                  }).reverse()}
                 </Grid>
               </Tiles>
             )}
@@ -210,15 +249,7 @@ const Listings = ({}) => {
             open={isSidebarOpen}
             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
           />
-          <LanguageSelector />
-          <ToggleButtonGroup value={view} exclusive onChange={handleViewChange}>
-            <ToggleButton value="list">
-              <ListIcon />
-            </ToggleButton>
-            <ToggleButton value="map">
-              <MapIcon />
-            </ToggleButton>
-          </ToggleButtonGroup>
+
           <FiltersContainer>
             <Filters filters={filters} setFilters={setFilters} />
           </FiltersContainer>

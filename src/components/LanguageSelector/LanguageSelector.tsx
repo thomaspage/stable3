@@ -4,6 +4,7 @@ import {
   Hamburger,
   LanguageSelectorContainer,
 } from "./LanguageSelector.styles";
+import { IconButton } from '@mui/material';
 
 const LanguageSelector = ({}) => {
 
@@ -19,7 +20,7 @@ const LanguageSelector = ({}) => {
 
   return (
     <LanguageSelectorContainer>
-      <Hamburger color="inherit" onClick={toggleLanguage}>{language}</Hamburger>
+      <Hamburger size="small" color="inherit" onClick={toggleLanguage}>{language}</Hamburger>
 
     </LanguageSelectorContainer>
   );

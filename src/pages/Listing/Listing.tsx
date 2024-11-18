@@ -1,32 +1,23 @@
-import {
-  Button,
-  IconButton,
-  ImageList,
-  ImageListItem,
-  Typography,
-} from "@mui/material";
-import {
-  ListingContainer,
-  Hotel,
-  Hotels,
-  HotelName,
-  InlineFlex,
-  MetroImg,
-  WalkerImg,
-  StyledImageCarousel,
-  StyledImageList,
-} from "./Listing.styles";
-import { Link, useParams } from "react-router-dom";
-import { useTranslation } from "react-i18next";
-import * as amplitude from "@amplitude/analytics-browser";
 import { gql, useQuery } from "@apollo/client";
-import { ListingProps } from "./Listing.types";
-import { formatCurrency } from "../../utils";
-import { NavigateBefore } from "@mui/icons-material";
-import styled from "styled-components";
-import { AmenityIcons } from "../../constants";
-import { Amenities } from "../../types";
-import ImageCarousel from "../../components/ImageCarousel";
+import { BedOutlined, EventAvailableOutlined, LocalAtm, LocationOnOutlined, ShowerOutlined, SpaceDashboardOutlined } from "@mui/icons-material";
+import {
+  ImageListItem,
+  Typography
+} from "@mui/material";
+import { useTranslation } from "react-i18next";
+import { useParams } from "react-router-dom";
+import { Amenity } from "../../types";
+import { formatCurrency, formatDate } from "../../utils";
+import {
+  AmenitiesContainer,
+  BodyContainer,
+  DescriptionContainer,
+  HighlightsContainer,
+  HightlightText,
+  ListingContainer,
+  StyledImageCarousel,
+  StyledImageList
+} from "./Listing.styles";
 
 const LISTING_QUERY = gql`
   query ($id: String!, $locale: String) {
@@ -36,7 +27,17 @@ const LISTING_QUERY = gql`
       }
       price
       title
+      description
       amenities
+      address
+      bathrooms
+      bedrooms
+      squareFootage
+      availableDate
+      location {
+        lat
+        lon
+      }
       imagesCollection {
         items {
           sys {
@@ -103,14 +104,19 @@ const Listing = ({}) => {
     images.length
   );
 
+    // Get available date
+    const today = new Date();
+    const date = new Date(data.listing.availableDate)
+    const utcDate = new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate())
+    const formattedDate = date < today ? t("common.availableNow") : t("common.availableDate", {date: formatDate({ date: utcDate, language })});
+  
   return (
     <ListingContainer>
       {/* <Typography>{t("pages.listing.message")}</Typography> */}
-
+      {/* 
       <Link to="/listings">
         <Button startIcon={<NavigateBefore />}>back</Button>
-      </Link>
-      
+      </Link> */}
 
       <StyledImageList
         sx={{ width: "100%" }}
@@ -118,42 +124,87 @@ const Listing = ({}) => {
         cols={4}
         rowHeight={100}
       >
-        {images
-          .slice(0, 4)
-          ?.map((item: any, index: number) => (
-            <ImageListItem
-              key={item.sys.id}
-              rows={imageLayout[index][0]}
-              cols={imageLayout[index][1]}
-            >
-              <img src={item.url} alt={item.title} loading="lazy" />
-            </ImageListItem>
-          ))}
+        {images.slice(0, 4)?.map((item: any, index: number) => (
+          <ImageListItem
+            key={item.sys.id}
+            rows={imageLayout[index][0]}
+            cols={imageLayout[index][1]}
+          >
+            <img src={item.url} alt={item.title} loading="lazy" />
+          </ImageListItem>
+        ))}
       </StyledImageList>
 
       <StyledImageCarousel
         images={images}
-        onClick={() => console.log("clicked")}
+        // onClick={() => console.log("clicked")}
+        showPreviews
       />
 
-      <Typography variant="h3">{data.listing.title}</Typography>
-      <Typography variant="body1">{price} / mo</Typography>
+      <Typography variant="h4">{data.listing.title}</Typography>
+      <HighlightsContainer>
+        {data.listing.address && (
+          <HightlightText>
+            <LocationOnOutlined />
+            <strong>{data.listing.location ? <a target="_blank" href={`https://maps.google.com/?q=${data.listing.location.lat},${data.listing.location.lon}`}>{data.listing.address}</a> : data.listing.address}</strong>
+          </HightlightText>
+        )}
+        {data.listing.price && (
+          <HightlightText>
+            <LocalAtm />
+            {price} / {t("common.month")}
+          </HightlightText>
+        )}
+        {!!data.listing.bedrooms && (
+          <HightlightText>
+            <BedOutlined /> {data.listing.bedrooms}{" "}
+            {data.listing.bedrooms > 1
+              ? t("common.bedrooms")
+              : t("common.bedroom")}
+          </HightlightText>
+        )}
+        {!!data.listing.bathrooms && (
+          <HightlightText>
+            <ShowerOutlined /> {data.listing.bathrooms}{" "}
+            {data.listing.bathrooms > 1
+              ? t("common.bathrooms")
+              : t("common.bathroom")}
+          </HightlightText>
+        )}
+        {data.listing.squareFootage && (
+          <HightlightText>
+            <SpaceDashboardOutlined />
+            {data.listing.squareFootage} {t("common.sqft")}
+          </HightlightText>
+        )}
+        {formattedDate && (
+          <HightlightText>
+            <EventAvailableOutlined />
+            {formattedDate}
+          </HightlightText>
+        )}
+      </HighlightsContainer>
 
-      {data.listing.amenities && (
-        <>
-          <Typography variant="h5">Amenities</Typography>
-          {data.listing.amenities.map((amenity: Amenities) => {
-            const text = t(`amenities.${amenity}`);
-            const Icon = AmenityIcons[amenity];
-            return (
-              <div>
-                {Icon && <Icon />}
-                <Typography key={amenity}>{text}</Typography>
-              </div>
-            );
-          })}
-        </>
-      )}
+      <BodyContainer>
+        {data.listing.description && (
+          <DescriptionContainer>
+            <Typography variant="h5">{t("common.description")}</Typography>
+            <Typography variant="body1" style={{ whiteSpace: "preserve" }}>
+              {data.listing.description}
+            </Typography>
+          </DescriptionContainer>
+        )}
+
+        {data.listing.amenities && (
+          <AmenitiesContainer>
+            <Typography variant="h5">{t("common.details")}</Typography>
+            {data.listing.amenities.map((amenity: Amenity) => {
+              const text = t(`amenities.${amenity}`);
+              return <Typography key={amenity}>- {text}</Typography>;
+            })}
+          </AmenitiesContainer>
+        )}
+      </BodyContainer>
     </ListingContainer>
   );
 };

@@ -30,6 +30,7 @@ export const Slide = styled("div")<{ $clickable: boolean }>(({ $clickable }) => 
   minWidth: 0,
   width: "100%",
   position: "relative",
+  overflow: "hidden",
   //   paddingLeft: 20,
 
   ...($clickable && {
@@ -50,12 +51,48 @@ export const Slide = styled("div")<{ $clickable: boolean }>(({ $clickable }) => 
 export const Image = styled("img")({
   width: "100%",
   height: "100%",
-  objectFit: "cover",
+  objectFit: "contain",
   aspectRatio: "3/2",
   // border: "1px solid black",
   // backgroundColor: "red",
   //   borderRadius: 10,
 });
+
+export const BlurredImage = styled("img")({
+  position: "absolute",
+  top: -50,
+  left: -50,
+  objectFit: "cover",
+  zIndex:-1,
+  filter: "blur(50px)",
+  aspectRatio: "none",
+  transformOrigin: "center",
+  width: "calc(100% + 100px)",
+  height: "calc(100% + 100px)",
+});
+
+export const PreviewImages = styled("div")({
+  padding: "10px 0",
+  display: "flex",
+  gap: 5,
+  whiteSpace: "nowrap",
+  overflowX: "auto",
+  justifyContent: "center",
+});
+
+
+export const PreviewImage = styled("img")({
+  cursor : "pointer",
+  height: 50,
+  // width: "100%",
+  // height: "100%",
+  // objectFit: "cover",
+  // aspectRatio: "3/2",
+  // border: "1px solid black",
+  // backgroundColor: "red",
+  //   borderRadius: 10,
+});
+
 
 export const NavigationButtons = styled("div")({
   display: "flex",

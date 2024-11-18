@@ -8,6 +8,8 @@ import {
 } from "@mui/material";
 import ImageCarousel from "../../../components/ImageCarousel";
 import {
+  ButtonsContainer,
+  Capitalized,
   FiltersContainer,
   SquareToggleButton,
   SquareToggleButtonGroup,
@@ -40,7 +42,10 @@ FiltersProps) => {
     t,
   } = useTranslation();
 
-  const [prices, setPrices] = useState<[number, number]>([PRICE_MIN, PRICE_MAX]);
+  const [prices, setPrices] = useState<[number, number]>([
+    PRICE_MIN,
+    PRICE_MAX,
+  ]);
   const [bedrooms, setBedrooms] = useState<Set<number>>(new Set());
   const [bathrooms, setBathrooms] = useState<Set<number>>(new Set());
   const [amenities, setAmenities] = useState<Set<string>>(new Set());
@@ -75,7 +80,7 @@ FiltersProps) => {
 
   const handlePriceChange = (
     event: Event | SyntheticEvent<Element, Event>,
-    value: number | number[],
+    value: number | number[]
   ) => {
     setPrices(value as [number, number]);
   };
@@ -99,14 +104,20 @@ FiltersProps) => {
 
   return (
     <FiltersContainer>
-      <div style={{ padding: 20 }}>
+      <Capitalized>
+        {t("common.monthlyRent")}
+      </Capitalized>
+
+      <div style={{ padding: 25, paddingTop: 50 }}>
         <Slider
           getAriaValueText={(value) => `${value}°C`}
           // aria-labelledby="discrete-slider"
           defaultValue={[PRICE_MIN, PRICE_MAX]}
           valueLabelDisplay="on"
           valueLabelFormat={(value) =>
-            `${formatCurrency({ amount: value, language })}${value === PRICE_MAX ? "+" : ""}`
+            `${formatCurrency({ amount: value, language })}${
+              value === PRICE_MAX ? "+" : ""
+            }`
           }
           // disableSwap={true}
           step={50}
@@ -159,40 +170,50 @@ FiltersProps) => {
         /> */}
       </div>
 
-      <Typography>Bedrooms</Typography>
-      <Button
+      <Capitalized>
+        {t("common.bedrooms")}
+      </Capitalized>
+      {/* <Button
         variant={bedrooms.size === 0 ? "contained" : "outlined"}
         onClick={() => setBedrooms(new Set())}
       >
-        any
-      </Button>
-      {[0, 1, 2, 3, 4, 5].map((bedroom) => (
+        {t("common.any")}
+      </Button> */}
+      <ButtonsContainer>
+      {[1, 2, 3, 4, 5].map((bedroom) => (
         <Button
           key={bedroom}
           variant={bedrooms.has(bedroom) ? "contained" : "outlined"}
           onClick={() => handleBedroomsChange(bedroom)}
+          style={{minWidth: "unset"}}
         >
           {bedroom}
         </Button>
       ))}
+      </ButtonsContainer>
 
-      <Typography>Bathrooms</Typography>
-      <Button
+      <Capitalized>
+        {t("common.bathrooms")}
+      </Capitalized>
+      {/* <Button
         variant={bathrooms.size === 0 ? "contained" : "outlined"}
         onClick={() => setBathrooms(new Set())}
       >
-        any
-      </Button>
+        {t("common.any")}
+        </Button> */}
+        <ButtonsContainer>
       {[1, 2, 3].map((bathroom) => (
         <Button
           key={bathroom}
           variant={bathrooms.has(bathroom) ? "contained" : "outlined"}
           onClick={() => handleBathroomsChange(bathroom)}
+          style={{minWidth: "unset"}}
         >
           {bathroom}
         </Button>
       ))}
-
+      </ButtonsContainer>
+      {/* 
       <Typography>Amenities</Typography>
       {Amenities.map((amenity) => (
         <Button
@@ -202,8 +223,8 @@ FiltersProps) => {
         >
           {t(`amenities.${amenity}`)}
         </Button>
-      ))}
-{/* 
+      ))} */}
+      {/* 
       <Typography>Available Date</Typography>
       <Input
           value={availableDate}
@@ -211,9 +232,8 @@ FiltersProps) => {
           onChange={(e) => setAvailableDate(e.target.value)}
           // placeholder="min"
         /> */}
-
     </FiltersContainer>
   );
-};
+}; 
 
 export default Filters;

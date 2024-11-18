@@ -47,7 +47,7 @@ export const AvailabilityBadge = styled(Typography).attrs({variant: "caption"})(
   left: 10,
   padding: "3px 10px",
   borderRadius: 3,
-  // fontSize: "0.8rem",
+  fontSize: "0.9rem",
   backgroundColor: theme.palette.primary.main,
   color: theme.palette.primary.contrastText,
   pointerEvents: "none",
