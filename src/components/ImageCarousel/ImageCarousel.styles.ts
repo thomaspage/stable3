@@ -104,6 +104,7 @@ export const NavigationButtons = styled("div")({
   justifyContent: "space-between",
   alignItems: "center",
   pointerEvents: "none",
+  zIndex: 1,
   //   boxShadow: "0 0 10px 0 rgba(0, 0, 0, 0.1) inset",
 });
 
