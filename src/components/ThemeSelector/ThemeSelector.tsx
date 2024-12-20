@@ -23,8 +23,8 @@ const ThemeSelector = ({
 
   return (
     <ThemeSelectorContainer>
-      <Hamburger size="small" color="inherit" onClick={toggleTheme}>
-        <newMode.icon />
+      <Hamburger size="small" color="inherit" onClick={toggleTheme}  >
+        <newMode.icon fontSize="small" />
       </Hamburger>
     </ThemeSelectorContainer>
   );
