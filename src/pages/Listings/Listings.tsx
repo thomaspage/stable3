@@ -3,6 +3,7 @@ import {
   ButtonGroup,
   CircularProgress,
   Grid,
+  PaletteMode,
   ToggleButton,
   ToggleButtonGroup,
   Typography,
@@ -44,6 +45,7 @@ import { Tune } from "@mui/icons-material";
 import Hamburger from "../../components/Hamburger";
 import logoDark from "../../assets/logoDark.png";
 import logoLight from "../../assets/logoLight.png";
+import ThemeSelector from "components/ThemeSelector";
 
 const LISTINGS_QUERY = gql`
   query (
@@ -105,12 +107,12 @@ const LISTINGS_QUERY = gql`
   }
 `;
 
-const Listings = ({}) => {
+const Listings = ({ setMode }: { setMode: (mode: PaletteMode) => void }) => {
   const {
     t,
     i18n: { language },
   } = useTranslation();
-  
+
   const theme = useTheme();
 
   const logo = theme.palette.mode === "dark" ? logoDark : logoLight;
@@ -178,6 +180,8 @@ const Listings = ({}) => {
       <HeaderContainer>
         <Logo src={logo} />
         <HeaderOptions>
+          <ThemeSelector setMode={setMode} />
+
           <LanguageSelector />
 
           <FilterButton
@@ -211,33 +215,35 @@ const Listings = ({}) => {
             {view === "list" && (
               <Tiles>
                 <Grid container spacing={3}>
-                  {data?.listingCollection.items.map((listing: any) => {
-                    return (
-                      <Grid
-                        key={listing.sys.id}
-                        item
-                        xs={12}
-                        md={isSidebarOpen ? 6 : 4}
-                        // lg={4}
-                        xl={isSidebarOpen ? 4 : 3}
-                        onMouseOver={() => setActiveListingId(null)}
-                      >
-                        <Tile
-                          id={listing.sys.id}
-                          availableDate={listing.availableDate}
-                          title={listing.title}
-                          bathrooms={listing.bathrooms}
-                          bedrooms={listing.bedrooms}
-                          squareFootage={listing.squareFootage}
-                          price={listing.price}
-                          images={listing.imagesCollection.items.filter(
-                            (x: any) => x
-                          )}
-                          active={activeListingId === listing.sys.id}
-                        />
-                      </Grid>
-                    );
-                  }).reverse()}
+                  {data?.listingCollection.items
+                    .map((listing: any) => {
+                      return (
+                        <Grid
+                          key={listing.sys.id}
+                          item
+                          xs={12}
+                          md={isSidebarOpen ? 6 : 4}
+                          // lg={4}
+                          xl={isSidebarOpen ? 4 : 3}
+                          onMouseOver={() => setActiveListingId(null)}
+                        >
+                          <Tile
+                            id={listing.sys.id}
+                            availableDate={listing.availableDate}
+                            title={listing.title}
+                            bathrooms={listing.bathrooms}
+                            bedrooms={listing.bedrooms}
+                            squareFootage={listing.squareFootage}
+                            price={listing.price}
+                            images={listing.imagesCollection.items.filter(
+                              (x: any) => x
+                            )}
+                            active={activeListingId === listing.sys.id}
+                          />
+                        </Grid>
+                      );
+                    })
+                    .reverse()}
                 </Grid>
               </Tiles>
             )}

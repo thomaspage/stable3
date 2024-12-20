@@ -21,7 +21,7 @@ import { SyntheticEvent, useEffect, useRef, useState } from "react";
 import { Amenities } from "../../../constants";
 
 const PRICE_MIN = 0;
-const PRICE_MAX = 1500;
+const PRICE_MAX = 2000;
 
 const Filters = ({
   // title,

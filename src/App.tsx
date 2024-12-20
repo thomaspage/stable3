@@ -1,4 +1,4 @@
-import { createTheme, useMediaQuery } from "@mui/material";
+import { createTheme, CssBaseline, PaletteMode, useMediaQuery } from "@mui/material";
 import {
   Navigate,
   Route,
@@ -68,8 +68,12 @@ const client = new ApolloClient({
 
 function App() {
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
+  let localStorageMode = localStorage.getItem("mode") as PaletteMode;
+  if (localStorageMode) {
+    localStorageMode = localStorageMode === "dark" ? "dark" : "light";
+  }
 
-  const [mode, setMode] = useState<"light" | "dark">(prefersDarkMode ? "light" : "light");
+  const [mode, setMode] = useState<"light" | "dark">(localStorageMode || (prefersDarkMode ? "dark" : "light"));
 
   const theme = createTheme({
     palette: {
@@ -133,11 +137,12 @@ function App() {
   return (
     <ApolloProvider client={client}>
       <ThemeProvider theme={theme}>
+        <CssBaseline />
         <Router>
           <Routes>
             <Route path="/" element={<Layout />}>
               <Route index element={<Navigate to="/listings" replace />} />
-              <Route path="listings" element={<Listings />} />
+              <Route path="listings" element={<Listings setMode={setMode} />} />
               <Route path="listings/:id" element={<Listing />} />
 
               {/* Redirect to home */}

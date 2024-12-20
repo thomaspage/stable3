@@ -1,11 +1,13 @@
 import { gql, useQuery } from "@apollo/client";
-import { BedOutlined, EventAvailableOutlined, LocalAtm, LocationOnOutlined, ShowerOutlined, SpaceDashboardOutlined } from "@mui/icons-material";
+import { BedOutlined, EventAvailableOutlined, LocalAtm, LocationOnOutlined, NavigateBefore, ShowerOutlined, SpaceDashboardOutlined } from "@mui/icons-material";
 import {
+  Button,
   ImageListItem,
-  Typography
+  Typography,
+  Link as StyledLink
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
-import { useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { Amenity } from "../../types";
 import { formatCurrency, formatDate } from "../../utils";
 import {
@@ -84,6 +86,7 @@ const Listing = ({}) => {
   } = useTranslation();
 
   const { id } = useParams();
+  const navigate = useNavigate();
 
   const { data, loading, error } = useQuery(LISTING_QUERY, {
     variables: {
@@ -113,10 +116,8 @@ const Listing = ({}) => {
   return (
     <ListingContainer>
       {/* <Typography>{t("pages.listing.message")}</Typography> */}
-      {/* 
-      <Link to="/listings">
-        <Button startIcon={<NavigateBefore />}>back</Button>
-      </Link> */}
+      
+      <Button onClick={() => navigate(-1)} startIcon={<NavigateBefore />}>back</Button>
 
       <StyledImageList
         sx={{ width: "100%" }}
@@ -146,7 +147,7 @@ const Listing = ({}) => {
         {data.listing.address && (
           <HightlightText>
             <LocationOnOutlined />
-            <strong>{data.listing.location ? <a target="_blank" href={`https://maps.google.com/?q=${data.listing.location.lat},${data.listing.location.lon}`}>{data.listing.address}</a> : data.listing.address}</strong>
+            <strong>{data.listing.location ? <Link target="_blank" to={`https://maps.google.com/?q=${data.listing.location.lat},${data.listing.location.lon}`}><StyledLink>{data.listing.address}</StyledLink></Link> : data.listing.address}</strong>
           </HightlightText>
         )}
         {data.listing.price && (

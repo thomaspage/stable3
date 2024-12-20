@@ -1,4 +1,4 @@
-import { Paper, Typography } from "@mui/material";
+import { Link as StyledLink, Paper, Typography } from "@mui/material";
 import ImageCarousel from "../../../components/ImageCarousel";
 import { AvailabilityBadge, TileContainer, TileContent, Title } from "./Tile.style";
 import { TileProps } from "./Tile.types";

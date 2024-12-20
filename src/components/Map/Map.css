@@ -55,4 +55,19 @@
 
 .mapboxgl-popup-content {
     padding: 0;
+    background: none;
+}
+
+.mapboxgl-popup-content a {
+    color: unset;
+}
+
+.mapboxgl-popup-close-button {
+    font-size: 1.5rem;
+    top: 10px;
+    right: 10px;
+}
+
+.mapboxgl-popup-tip {
+    display: none;
 }
