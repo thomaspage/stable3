@@ -59,7 +59,7 @@ const LISTINGS_QUERY = gql`
   ) {
     listingCollection(
       locale: $locale
-      order: availableDate_DESC
+      order: [rented_DESC, availableDate_DESC]
       where: {
         price_lte: $priceMax
         price_gte: $priceMin
@@ -91,6 +91,7 @@ const LISTINGS_QUERY = gql`
         title
         squareFootage
         price
+        rented
         availableDate
         imagesCollection {
           items {
@@ -239,6 +240,7 @@ const Listings = ({ setMode }: { setMode: (mode: PaletteMode) => void }) => {
                               (x: any) => x
                             )}
                             active={activeListingId === listing.sys.id}
+                            rented={listing.rented}
                           />
                         </Grid>
                       );

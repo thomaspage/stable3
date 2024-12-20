@@ -25,7 +25,8 @@
             "details": "Rental Details",
             "description": "Description",
             "monthlyRent"   : "monthly rent",
-            "availableDate": "Available {{date}}"
+            "availableDate": "Available {{date}}",
+            "rented": "Rented"
         }
     }
 }

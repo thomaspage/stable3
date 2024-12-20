@@ -14,4 +14,5 @@ export interface TileProps {
   // fullAddress: string;
   squareFootage: number;
   active: boolean;
+  rented: boolean;
 }

@@ -12,7 +12,8 @@
             "month": "mois",
             "description": "Déscription",
             "monthlyRent"   : "loyer mensuel",
-            "availableDate": "Disponible le {{date}}"
+            "availableDate": "Disponible le {{date}}",
+            "rented": "Loué"
         }
     }
 }

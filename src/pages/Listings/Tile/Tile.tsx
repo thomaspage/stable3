@@ -1,6 +1,6 @@
 import { Link as StyledLink, Paper, Typography } from "@mui/material";
 import ImageCarousel from "../../../components/ImageCarousel";
-import { AvailabilityBadge, TileContainer, TileContent, Title } from "./Tile.style";
+import { AvailabilityBadge, RentedBadge, TileContainer, TileContent, TileInner, Title } from "./Tile.style";
 import { TileProps } from "./Tile.types";
 import { formatCurrency, formatDate, getMonth } from "../../../utils";
 import { useTranslation } from "react-i18next";
@@ -20,6 +20,7 @@ const Tile = ({
   images,
   squareFootage,
   active,
+  rented,
 }: // fullAddress
 TileProps) => {
   const {
@@ -37,7 +38,8 @@ TileProps) => {
 
   return (
     <TileContainer $active={active}>
-      <AvailabilityBadge>{formattedDate}</AvailabilityBadge>
+      {rented ? <RentedBadge>{t("common.rented")}</RentedBadge> : <AvailabilityBadge>{formattedDate}</AvailabilityBadge>}
+      <TileInner $rented={rented}>
       <Link to={`/listings/${id}`}>
         <Paper elevation={3} sx={{ borderRadius: 3, overflow: "hidden" }}>
           {images.length ? (
@@ -76,12 +78,13 @@ TileProps) => {
           </Typography>
         )}
 
-        {price && (
+        {!rented && price && (
           <Typography>
             {formatCurrency({ amount: price, language })} / {t("common.month")}
           </Typography>
         )}
       </TileContent>
+      </TileInner>
     </TileContainer>
   );
 };
