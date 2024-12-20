@@ -47,6 +47,7 @@ export const TileInner = styled('div')<{ $rented: boolean }>(
 export const Title = styled(Typography)({
   fontSize: "1.5rem",
   fontWeight: 700,
+  textWrap: "balance"
 });
 
 export const TileContent = styled("div")({
