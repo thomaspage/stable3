@@ -152,7 +152,7 @@ export const Logo = styled("img")(({theme}) => ({
   // backgroundColor: "red",
   //   borderRadius: 10,
   [theme.breakpoints.down("sm")]: {
-    height: 50,
+    height: 75,
   }
 }));
 
