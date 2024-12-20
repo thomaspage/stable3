@@ -5,4 +5,5 @@ export interface ImageCarouselProps {
     className?: HTMLElement["className"];
     onClick?: (index: number) => void;
     showPreviews?: boolean;
+    aspectRatio?: number;
 }

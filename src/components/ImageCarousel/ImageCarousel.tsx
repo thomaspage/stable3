@@ -15,7 +15,7 @@ import useEmblaCarousel, { UseEmblaCarouselType } from "embla-carousel-react";
 import { NavigateBefore, NavigateNext } from "@mui/icons-material";
 import { useCallback, useEffect, useState } from "react";
 
-const ImageCarousel = ({ className, images, onClick, showPreviews }: ImageCarouselProps) => {
+const ImageCarousel = ({ className, images, onClick, showPreviews, aspectRatio }: ImageCarouselProps) => {
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: false });
 
   const [prevButtonDisabled, setPrevButtonDisabled] = useState(true);
@@ -53,7 +53,7 @@ const ImageCarousel = ({ className, images, onClick, showPreviews }: ImageCarous
                 key={image.sys?.id || index}
               >
                 <BlurredImage src={`${image.url}?w=1000`} alt={image.title} />
-                <Image src={`${image.url}?w=1000`} alt={image.title} />
+                <Image $aspectRatio={aspectRatio || 1.35} src={`${image.url}?w=1000`} alt={image.title} />
               </Slide>
             );
           })}

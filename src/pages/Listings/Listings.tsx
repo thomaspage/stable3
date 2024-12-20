@@ -93,6 +93,7 @@ const LISTINGS_QUERY = gql`
         price
         rented
         availableDate
+        shortKeyDescription
         imagesCollection {
           items {
             sys {
@@ -232,6 +233,7 @@ const Listings = ({ setMode }: { setMode: (mode: PaletteMode) => void }) => {
                             id={listing.sys.id}
                             availableDate={listing.availableDate}
                             title={listing.title}
+                            description={listing.shortKeyDescription}
                             bathrooms={listing.bathrooms}
                             bedrooms={listing.bedrooms}
                             squareFootage={listing.squareFootage}

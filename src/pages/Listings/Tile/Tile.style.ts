@@ -50,6 +50,16 @@ export const Title = styled(Typography)({
   textWrap: "balance"
 });
 
+export const Description = styled(Typography)({
+  // fontSize: "1rem",
+  fontWeight: 500,
+  fontStyle: "italic",
+  textWrap: "balance",
+  whiteSpace: "nowrap",
+  overflow: "hidden",
+  textOverflow: "ellipsis",
+});
+
 export const TileContent = styled("div")({
   padding: "10px 10px 15px 10px",
 })

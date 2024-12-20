@@ -4,7 +4,7 @@ export interface TileProps {
   id: string;
   availableDate: string;
   title: string;
-  // description: string;
+  description?: string;
   price: number;
   bathrooms: number;
   bedrooms: number;

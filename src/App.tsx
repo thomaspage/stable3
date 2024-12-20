@@ -107,6 +107,9 @@ function App() {
       h4: {
         // fontFamily: "Ballantines",
       },
+      h5: {
+        marginBottom: "0.25rem",
+      },
       body1: {
         fontSize: "1rem",
         fontWeight: 200,

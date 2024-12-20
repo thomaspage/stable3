@@ -117,7 +117,7 @@ const Listing = ({}) => {
     <ListingContainer>
       {/* <Typography>{t("pages.listing.message")}</Typography> */}
       
-      <Button onClick={() => navigate(-1)} startIcon={<NavigateBefore />}>back</Button>
+      <Button style={{position:"sticky", top: 0, zIndex: 2}} onClick={() => navigate(-1)} startIcon={<NavigateBefore />}>back</Button>
 
       <StyledImageList
         sx={{ width: "100%" }}
@@ -139,10 +139,11 @@ const Listing = ({}) => {
       <StyledImageCarousel
         images={images}
         // onClick={() => console.log("clicked")}
+        aspectRatio={1.8}
         showPreviews
       />
 
-      <Typography variant="h4">{data.listing.title}</Typography>
+      <Typography fontWeight={700} variant="h4">{data.listing.title}</Typography>
       <HighlightsContainer>
         {data.listing.address && (
           <HightlightText>
@@ -188,9 +189,9 @@ const Listing = ({}) => {
 
       <BodyContainer>
         {data.listing.description && (
-          <DescriptionContainer>
+          <DescriptionContainer style={{maxWidth: "100%"}}>
             <Typography variant="h5">{t("common.description")}</Typography>
-            <Typography variant="body1" style={{ whiteSpace: "preserve" }}>
+            <Typography variant="body1" style={{ whiteSpace: "preserve-breaks" }}>
               {data.listing.description}
             </Typography>
           </DescriptionContainer>

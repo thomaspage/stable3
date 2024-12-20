@@ -48,15 +48,15 @@ export const Slide = styled("div")<{ $clickable: boolean }>(({ $clickable }) => 
   }),
 }));
 
-export const Image = styled("img")({
+export const Image = styled("img")(({$aspectRatio}: {$aspectRatio?: number}) => ({
   width: "100%",
   height: "100%",
   objectFit: "contain",
-  aspectRatio: "3/2",
+  aspectRatio: $aspectRatio?.toString(),
   // border: "1px solid black",
   // backgroundColor: "red",
   //   borderRadius: 10,
-});
+}) as any);
 
 export const BlurredImage = styled("img")({
   position: "absolute",
