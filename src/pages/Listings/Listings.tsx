@@ -206,7 +206,7 @@ const Listings = ({ setMode }: { setMode: (mode: PaletteMode) => void }) => {
       </HeaderContainer>
 
       <ViewContainer>
-        <View sidebarOpen={isSidebarOpen}>
+        <View $sidebarOpen={isSidebarOpen}>
           <ViewInner>
             {view === "map" && (
               <MapContainer>

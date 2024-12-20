@@ -85,11 +85,11 @@ export const Sidebar = styled("div")<{open: boolean}>(({theme, open}) => ({
   
 }))
 
-export const View = styled("div")<{sidebarOpen: boolean}>(({sidebarOpen}) => ({
+export const View = styled("div")<{$sidebarOpen: boolean}>(({$sidebarOpen}) => ({
   flexBasis: 1000,
   flexGrow: 1,
   overflowY: "auto",
-  direction: sidebarOpen ? "rtl": "ltr",
+  direction: $sidebarOpen ? "rtl": "ltr",
   display: "flex",
   flexDirection: "column",
   alignItems: "flex-end",

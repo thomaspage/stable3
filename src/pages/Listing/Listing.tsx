@@ -1,10 +1,18 @@
 import { gql, useQuery } from "@apollo/client";
-import { BedOutlined, EventAvailableOutlined, LocalAtm, LocationOnOutlined, NavigateBefore, ShowerOutlined, SpaceDashboardOutlined } from "@mui/icons-material";
+import {
+  BedOutlined,
+  EventAvailableOutlined,
+  LocalAtm,
+  LocationOnOutlined,
+  NavigateBefore,
+  ShowerOutlined,
+  SpaceDashboardOutlined,
+} from "@mui/icons-material";
 import {
   Button,
   ImageListItem,
   Typography,
-  Link as StyledLink
+  Link as StyledLink,
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate, useParams } from "react-router-dom";
@@ -18,7 +26,7 @@ import {
   HightlightText,
   ListingContainer,
   StyledImageCarousel,
-  StyledImageList
+  StyledImageList,
 } from "./Listing.styles";
 
 const LISTING_QUERY = gql`
@@ -36,6 +44,7 @@ const LISTING_QUERY = gql`
       bedrooms
       squareFootage
       availableDate
+      rented
       location {
         lat
         lon
@@ -93,31 +102,48 @@ const Listing = ({}) => {
       id,
       locale: language,
     },
-    errorPolicy: "all"
+    errorPolicy: "all",
   });
 
   if (loading) return null;
 
+  if (data && (!data.listing || data.listing.rented)) {
+    setTimeout(() => navigate("/"), 0);
+    return null;
+  }
 
   const price = formatCurrency({ amount: data.listing.price, language });
 
-  const images = data.listing.imagesCollection.items.filter((x: any) => x)
+  const images = data.listing.imagesCollection.items.filter((x: any) => x);
 
-  const imageLayout = getImageLayout(
-    images.length
+  const imageLayout = getImageLayout(images.length);
+
+  // Get available date
+  const today = new Date();
+  const date = new Date(data.listing.availableDate);
+  const utcDate = new Date(
+    date.getUTCFullYear(),
+    date.getUTCMonth(),
+    date.getUTCDate()
   );
+  const formattedDate =
+    date < today
+      ? t("common.availableNow")
+      : t("common.availableDate", {
+          date: formatDate({ date: utcDate, language }),
+        });
 
-    // Get available date
-    const today = new Date();
-    const date = new Date(data.listing.availableDate)
-    const utcDate = new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate())
-    const formattedDate = date < today ? t("common.availableNow") : t("common.availableDate", {date: formatDate({ date: utcDate, language })});
-  
   return (
     <ListingContainer>
       {/* <Typography>{t("pages.listing.message")}</Typography> */}
-      
-      <Button style={{position:"sticky", top: 0, zIndex: 2}} onClick={() => navigate(-1)} startIcon={<NavigateBefore />}>back</Button>
+
+      <Button
+        style={{ position: "sticky", top: 0, zIndex: 2 }}
+        onClick={() => navigate(-1)}
+        startIcon={<NavigateBefore />}
+      >
+        back
+      </Button>
 
       <StyledImageList
         sx={{ width: "100%" }}
@@ -143,12 +169,25 @@ const Listing = ({}) => {
         showPreviews
       />
 
-      <Typography fontWeight={700} variant="h4">{data.listing.title}</Typography>
+      <Typography fontWeight={700} variant="h4">
+        {data.listing.title}
+      </Typography>
       <HighlightsContainer>
         {data.listing.address && (
           <HightlightText>
             <LocationOnOutlined />
-            <strong>{data.listing.location ? <Link target="_blank" to={`https://maps.google.com/?q=${data.listing.location.lat},${data.listing.location.lon}`}><StyledLink>{data.listing.address}</StyledLink></Link> : data.listing.address}</strong>
+            <strong>
+              {data.listing.location ? (
+                <StyledLink
+                  target="_blank"
+                  href={`https://maps.google.com/?q=${data.listing.location.lat},${data.listing.location.lon}`}
+                >
+                  {data.listing.address}
+                </StyledLink>
+              ) : (
+                data.listing.address
+              )}
+            </strong>
           </HightlightText>
         )}
         {data.listing.price && (
@@ -189,9 +228,12 @@ const Listing = ({}) => {
 
       <BodyContainer>
         {data.listing.description && (
-          <DescriptionContainer style={{maxWidth: "100%"}}>
+          <DescriptionContainer style={{ maxWidth: "100%" }}>
             <Typography variant="h5">{t("common.description")}</Typography>
-            <Typography variant="body1" style={{ whiteSpace: "preserve-breaks" }}>
+            <Typography
+              variant="body1"
+              style={{ whiteSpace: "preserve-breaks" }}
+            >
               {data.listing.description}
             </Typography>
           </DescriptionContainer>
