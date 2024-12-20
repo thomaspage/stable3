@@ -27,7 +27,10 @@
             "nopets": "No pets allowed",
             "highestfloor": "Highest floor",
             "laundryroom": "Laundry room",
-            "parkingonstreet": "Street parking"
+            "parkingonstreet": "Street parking",
+            "washerdryerready": "Washer/Dryer ready",
+            "noappliances": "No appliances",
+            "petsok": "Pets allowed"
         },
         "common": {
             "availableNow": "Available now",
