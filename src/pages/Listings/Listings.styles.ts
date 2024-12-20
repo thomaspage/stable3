@@ -104,6 +104,14 @@ export const ViewInner = styled("div")({
 export const FilterButton = styled(IconButton)(({theme}) => ({
 
   backgroundColor: theme.palette.background.default,
+  pointerEvents: "auto",
+  minWidth: 0,
+  height: 50,
+  width: 50,
+  borderRadius: 1000,
+  // lineHeight: "1rem",
+  textTransform: "uppercase",
+  fontSize: "0.9rem",
 
   [theme.breakpoints.down("sm")]: {
     display: "none",
@@ -133,7 +141,7 @@ export const SidebarHamburger = styled(Hamburger)(({theme}) => ({
 }))
 
 
-export const Logo = styled("img")({
+export const Logo = styled("img")(({theme}) => ({
   height: 100,
   margin: "10px",
   // width: "100%",
@@ -143,7 +151,10 @@ export const Logo = styled("img")({
   // border: "1px solid black",
   // backgroundColor: "red",
   //   borderRadius: 10,
-});
+  [theme.breakpoints.down("sm")]: {
+    height: 50,
+  }
+}));
 
 export const HeaderContainer = styled("div")({
   display: "flex",
@@ -158,5 +169,5 @@ export const HeaderOptions = styled("div")({
   justifyContent: "space-between",
   alignItems: "center",
   padding: 20,
-  gap: 20,
+  gap: 10,
 });

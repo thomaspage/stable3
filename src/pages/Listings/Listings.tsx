@@ -192,7 +192,7 @@ const Listings = ({ setMode }: { setMode: (mode: PaletteMode) => void }) => {
             <Tune fontSize="medium" />
           </FilterButton>
 
-          <ToggleButtonGroup value={view} exclusive onChange={handleViewChange}>
+          <ToggleButtonGroup size="small" value={view} exclusive onChange={handleViewChange}>
             <ToggleButton value="list">
               <ListIcon />
             </ToggleButton>
@@ -261,7 +261,7 @@ const Listings = ({ setMode }: { setMode: (mode: PaletteMode) => void }) => {
           </FiltersContainer>
         </Sidebar>
 
-        <SidebarButton size="large" onClick={() => setIsSidebarOpen(true)}>
+        <SidebarButton color="primary" size="large" onClick={() => setIsSidebarOpen(true)}>
           <Tune fontSize="large" />
         </SidebarButton>
       </ViewContainer>

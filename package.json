@@ -1,7 +1,7 @@
 {
   "name": "stable3",
   "version": "0.1.0",
-  "homepage": "https://thomaspage.github.io/stable3",
+  "homepage": "https://stabl3.ca",
   "private": true,
   "dependencies": {
     "@amplitude/analytics-browser": "^2.4.1",
