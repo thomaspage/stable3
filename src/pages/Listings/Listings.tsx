@@ -139,7 +139,8 @@ const Listings = ({ setMode }: { setMode: (mode: PaletteMode) => void }) => {
       availableDate: filters.availableDate,
     },
     errorPolicy: "all",
-  });
+  }, 
+);
 
   useEffect(() => {
     localStorage.setItem("listingsView", view);
@@ -269,66 +270,7 @@ const Listings = ({ setMode }: { setMode: (mode: PaletteMode) => void }) => {
           <Tune fontSize="large" />
         </SidebarButton>
       </ViewContainer>
-
-      {/* {view === "list" && (
-        <ListView>
-          <Tiles>
-            <Grid container spacing={3}>
-              {data?.listingCollection.items.map((listing: any) => {
-                return (
-                  <Grid
-                    key={listing.sys.id}
-                    item
-                    xs={12}
-                    sm={6}
-                    md={4}
-                    lg={3}
-                    xl={2}
-                  >
-                    <Tile
-                      title={listing.title}
-                      bedrooms={listing.bedrooms}
-                      squareFootage={listing.squareFootage}
-                      price={listing.price}
-                      images={listing.imagesCollection.items}
-                      active={activeListingId === listing.sys.id}
-                    />
-                  </Grid>
-                );
-              })}
-            </Grid>
-          </Tiles>
-        </ListView>
-      )} */}
-
-      {/* 
-      <div>
-        {data.listingCollection.items.map((listing: any) => {
-          return (
-            <div key={listing.sys.id}>
-              <Link
-                to={`/listings/${listing.sys.id}`}
-                onClick={() =>
-                  amplitude.track("Click", { button: listing.sys.id })
-                }
-              >
-                <Carousel autoPlay={false} animation="slide">
-                  {listing.imagesCollection.items.map((image: any) => {
-                    return (
-                      <img
-                        style={{pointerEvents: "none"}}
-                        key={image.sys.id}
-                        src={image.url}
-                        alt={image.title}
-                      />
-                    );
-                  })}
-                </Carousel>
-              </Link>
-            </div>
-          );
-        })}
-      </div> */}
+      
     </ListingsContainer>
   );
 };

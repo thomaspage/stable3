@@ -128,15 +128,8 @@ function App() {
     },
   });
 
-  // Toggle light/dark mode (for testing)
-  // useEffect(() => {
-  //   setTimeout(() => {
-  //     setMode(mode === "light" ? "dark" : "light");
-  //   }, 10000);
-  // }, [mode]);
-
   useLanguageSwitcher();
-  // theme.palette.
+  
   return (
     <ApolloProvider client={client}>
       <ThemeProvider theme={theme}>

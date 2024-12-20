@@ -51,6 +51,7 @@ FiltersProps) => {
   const [amenities, setAmenities] = useState<Set<string>>(new Set());
   const [availableDate, setAvailableDate] = useState<string>("");
   const timeout = useRef<NodeJS.Timeout | null>(null);
+  const firstUpdate = useRef(true);
 
   const minDistance = 50;
 
@@ -89,7 +90,10 @@ FiltersProps) => {
     if (timeout.current) {
       clearTimeout(timeout.current);
     }
-
+    if (firstUpdate.current) {
+      firstUpdate.current = false;
+      return;
+    }
     timeout.current = setTimeout(() => {
       setFilters({
         amenitiesContainsAll: Array.from(amenities),
