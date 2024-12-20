@@ -1,24 +1,24 @@
 {
   "files": {
-    "main.css": "/stable3/static/css/main.71a55834.css",
-    "main.js": "/stable3/static/js/main.58cf0c01.js",
-    "static/media/PPHatton-Bold.woff": "/stable3/static/media/PPHatton-Bold.84d28a71dd200536160c.woff",
-    "static/media/PPHatton-Medium.woff": "/stable3/static/media/PPHatton-Medium.4e69b7e676ef0b973548.woff",
-    "static/media/PPHatton-BoldItalic.woff": "/stable3/static/media/PPHatton-BoldItalic.bb274c3200b38521e211.woff",
-    "static/media/PPHatton-MediumItalic.woff": "/stable3/static/media/PPHatton-MediumItalic.d9bb2a984d1495f428d7.woff",
-    "static/media/PPHatton-Ultralight.woff": "/stable3/static/media/PPHatton-Ultralight.45dcef934b1dc4f33163.woff",
-    "static/media/PPHatton-UltralightItalic.woff": "/stable3/static/media/PPHatton-UltralightItalic.bfdbaabd3e525a13a17d.woff",
-    "static/media/cooperl.ttf": "/stable3/static/media/cooperl.bc04a48a28c648b3a126.ttf",
-    "static/media/cooperm.ttf": "/stable3/static/media/cooperm.0e996d293279ab5c2b3a.ttf",
-    "static/media/ballantines.woff": "/stable3/static/media/ballantines.01bc5e8f03195996622c.woff",
-    "static/media/logoLight.png": "/stable3/static/media/logoLight.8ce333fd04ea3a4f6323.png",
-    "static/media/logoDark.png": "/stable3/static/media/logoDark.bf8afde65759eaea7799.png",
-    "index.html": "/stable3/index.html",
-    "main.71a55834.css.map": "/stable3/static/css/main.71a55834.css.map",
-    "main.58cf0c01.js.map": "/stable3/static/js/main.58cf0c01.js.map"
+    "main.css": "/static/css/main.e76983b6.css",
+    "main.js": "/static/js/main.ab11107e.js",
+    "static/media/PPHatton-Bold.woff": "/static/media/PPHatton-Bold.84d28a71dd200536160c.woff",
+    "static/media/PPHatton-Medium.woff": "/static/media/PPHatton-Medium.4e69b7e676ef0b973548.woff",
+    "static/media/PPHatton-BoldItalic.woff": "/static/media/PPHatton-BoldItalic.bb274c3200b38521e211.woff",
+    "static/media/PPHatton-MediumItalic.woff": "/static/media/PPHatton-MediumItalic.d9bb2a984d1495f428d7.woff",
+    "static/media/PPHatton-Ultralight.woff": "/static/media/PPHatton-Ultralight.45dcef934b1dc4f33163.woff",
+    "static/media/PPHatton-UltralightItalic.woff": "/static/media/PPHatton-UltralightItalic.bfdbaabd3e525a13a17d.woff",
+    "static/media/cooperl.ttf": "/static/media/cooperl.bc04a48a28c648b3a126.ttf",
+    "static/media/cooperm.ttf": "/static/media/cooperm.0e996d293279ab5c2b3a.ttf",
+    "static/media/ballantines.woff": "/static/media/ballantines.01bc5e8f03195996622c.woff",
+    "static/media/logoLight.png": "/static/media/logoLight.8ce333fd04ea3a4f6323.png",
+    "static/media/logoDark.png": "/static/media/logoDark.bf8afde65759eaea7799.png",
+    "index.html": "/index.html",
+    "main.e76983b6.css.map": "/static/css/main.e76983b6.css.map",
+    "main.ab11107e.js.map": "/static/js/main.ab11107e.js.map"
   },
   "entrypoints": [
-    "static/css/main.71a55834.css",
-    "static/js/main.58cf0c01.js"
+    "static/css/main.e76983b6.css",
+    "static/js/main.ab11107e.js"
   ]
 }
