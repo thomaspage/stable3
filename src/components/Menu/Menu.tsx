@@ -134,7 +134,7 @@ const Menu = ({}) => {
         })}
       </List>
 
-      <LanguageSelector />
+      {/* <LanguageSelector /> */}
     </MenuContainer>
   );
 };

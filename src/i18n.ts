@@ -23,9 +23,9 @@ i18n
     react: {
       useSuspense: false
     },
-    detection: {
+    // detection: {
 
-    }
+    // }
   });
 
   export default i18n;

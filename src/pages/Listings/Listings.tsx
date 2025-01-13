@@ -185,7 +185,7 @@ const Listings = ({ setMode }: { setMode: (mode: PaletteMode) => void }) => {
         <HeaderOptions>
           <ThemeSelector setMode={setMode} />
 
-          <LanguageSelector />
+          {/* <LanguageSelector /> */}
 
           <FilterButton
             color="primary"
