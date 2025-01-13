@@ -67,6 +67,7 @@
     "@mui/styled-engine": "npm:@mui/styled-engine-sc@latest"
   },
   "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@types/mapbox-gl": "^3.1.0",
     "@types/styled-components": "^5.1.34",
     "file-loader": "^6.2.0",
