@@ -13,6 +13,12 @@ import {
   ImageListItem,
   Typography,
   Link as StyledLink,
+  PaletteMode,
+  useTheme,
+  useMediaQuery,
+  Breakpoint,
+  Modal,
+  Container,
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate, useParams } from "react-router-dom";
@@ -24,10 +30,15 @@ import {
   DescriptionContainer,
   HighlightsContainer,
   HightlightText,
+  ImageCarouselModal,
   ListingContainer,
+  MobileImageCarousel,
   StyledImageCarousel,
   StyledImageList,
 } from "./Listing.styles";
+import Header from "components/Header";
+import { useEffect, useState } from "react";
+import ImageCarousel from "components/ImageCarousel";
 
 const LISTING_QUERY = gql`
   query ($id: String!, $locale: String) {
@@ -78,17 +89,25 @@ const getImageLayout = (index: number) => {
         [2, 2],
         [2, 2],
       ];
-    default:
+    case 4:
       return [
         [4, 2],
         [2, 2],
         [2, 1],
         [2, 1],
       ];
+    default:
+      return [
+        [4, 2],
+        [2, 1],
+        [2, 1],
+        [2, 1],
+        [2, 1],
+      ];
   }
 };
 
-const Listing = ({}) => {
+const Listing = ({ setMode }: { setMode: (mode: PaletteMode) => void }) => {
   const {
     i18n: { language },
     t,
@@ -96,6 +115,8 @@ const Listing = ({}) => {
 
   const { id } = useParams();
   const navigate = useNavigate();
+
+  const [startIndex, setStartIndex] = useState<number | null>(null);
 
   const { data, loading, error } = useQuery(LISTING_QUERY, {
     variables: {
@@ -137,6 +158,8 @@ const Listing = ({}) => {
     <ListingContainer>
       {/* <Typography>{t("pages.listing.message")}</Typography> */}
 
+      <Header setMode={setMode} />
+
       <Button
         style={{ position: "sticky", top: 0, zIndex: 2 }}
         onClick={() => navigate(-1)}
@@ -151,23 +174,36 @@ const Listing = ({}) => {
         cols={4}
         rowHeight={100}
       >
-        {images.slice(0, 4)?.map((item: any, index: number) => (
+        {images.slice(0, 5)?.map((item: any, index: number) => (
           <ImageListItem
             key={item.sys.id}
             rows={imageLayout[index][0]}
             cols={imageLayout[index][1]}
+            onClick={() => setStartIndex(index)}
           >
             <img src={item.url} alt={item.title} loading="lazy" />
           </ImageListItem>
         ))}
       </StyledImageList>
 
-      <StyledImageCarousel
-        images={images}
-        // onClick={() => console.log("clicked")}
-        aspectRatio={1.8}
-        showPreviews
-      />
+      <MobileImageCarousel>
+        <StyledImageCarousel images={images} aspectRatio={1.8} showPreviews />
+      </MobileImageCarousel>
+
+      <ImageCarouselModal
+        open={startIndex !== null}
+        onClose={() => setStartIndex(null)}
+        style={{alignItems: "center", justifyContent: "center", display: "flex"}}
+      >
+        <Container maxWidth="lg">
+          <ImageCarousel
+            images={images}
+            aspectRatio={1.8}
+            showPreviews
+            startIndex={startIndex || 0}
+          />
+        </Container>
+      </ImageCarouselModal>
 
       <Typography fontWeight={700} variant="h4">
         {data.listing.title}

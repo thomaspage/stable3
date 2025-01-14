@@ -6,4 +6,6 @@ export interface ImageCarouselProps {
     onClick?: (index: number) => void;
     showPreviews?: boolean;
     aspectRatio?: number;
+    popup?: boolean
+    startIndex?: number;
 }

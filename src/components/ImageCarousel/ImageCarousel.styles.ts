@@ -1,7 +1,7 @@
 import { NavLink } from "react-router-dom";
 import { styled } from "@mui/material/styles";
 // import { styled as styled2 } from "styled-components";
-import { Button, IconButton } from "@mui/material";
+import { Button, IconButton, Modal } from "@mui/material";
 
 export const ImageCarouselContainer = styled("div")(
   ({  }) => ({
@@ -119,3 +119,13 @@ export const NavigationButton = styled(IconButton)({
     backgroundColor: "rgba(0, 0, 0, 0.1)",
   },
 });
+
+
+export const PopupWrapper = styled("div")({
+
+  backgroundColor: "black",
+})
+
+export const StyledModal = styled(Modal)({
+  // display: "none"
+})

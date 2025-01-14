@@ -1,4 +1,4 @@
-import { Container, ImageList, Typography } from "@mui/material";
+import { Container, ImageList, Modal, Typography } from "@mui/material";
 import { styled } from "styled-components";
 import ImageCarousel from "../../components/ImageCarousel";
 
@@ -50,13 +50,22 @@ export const HotelName = styled(Typography).attrs({ variant: "h3" })(
 );
 
 export const StyledImageCarousel = styled(ImageCarousel)(({ theme }) => ({
-  // [theme.breakpoints.up("sm")]: { display: "none" },
-  maxWidth: 600
+  maxWidth: 600,
+
 }));
+
+export const MobileImageCarousel = styled("div")(({ theme }) => ({
+  [theme.breakpoints.up("sm")]: { display: "none" },
+}));
+
+export const ImageCarouselModal = styled(Modal)(({ theme }) => ({
+  [theme.breakpoints.down("sm")]: { display: "none" },
+}));
+
 
 export const StyledImageList = styled(ImageList)(({ theme }) => ({
   [theme.breakpoints.down("sm")]: { display: "none" },
-  display: "none"
+  // display: "none"
 
 }));
 

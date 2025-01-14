@@ -139,7 +139,7 @@ function App() {
             <Route path="/" element={<Layout />}>
               <Route index element={<Navigate to="/listings" replace />} />
               <Route path="listings" element={<Listings setMode={setMode} />} />
-              <Route path="listings/:id" element={<Listing />} />
+              <Route path="listings/:id" element={<Listing setMode={setMode} />} />
 
               {/* Redirect to home */}
               {/* Replace with 404 */}

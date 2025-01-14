@@ -8,33 +8,45 @@ import {
   PreviewImages,
   Slide,
   Slides,
+  StyledModal,
 } from "./ImageCarousel.styles";
 import { ImageCarouselProps } from "./ImageCarousel.types";
-import { EmblaCarouselType } from 'embla-carousel'
+import { EmblaCarouselType } from "embla-carousel";
 import useEmblaCarousel, { UseEmblaCarouselType } from "embla-carousel-react";
 import { NavigateBefore, NavigateNext } from "@mui/icons-material";
 import { useCallback, useEffect, useState } from "react";
+import { Modal } from "@mui/material";
 
-const ImageCarousel = ({ className, images, onClick, showPreviews, aspectRatio }: ImageCarouselProps) => {
-  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: false });
+const ImageCarousel = ({
+  className,
+  images,
+  onClick,
+  showPreviews,
+  aspectRatio,
+  popup,
+  startIndex,
+}: ImageCarouselProps) => {
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: false, startIndex});
 
   const [prevButtonDisabled, setPrevButtonDisabled] = useState(true);
   const [nextButtonDisabled, setNextButtonDisabled] = useState(true);
 
   const onSelect = useCallback((emblaApi: EmblaCarouselType) => {
-    setPrevButtonDisabled(!emblaApi.canScrollPrev())
-    setNextButtonDisabled(!emblaApi.canScrollNext())
-  }, [])
+    setPrevButtonDisabled(!emblaApi.canScrollPrev());
+    setNextButtonDisabled(!emblaApi.canScrollNext());
+  }, []);
 
   useEffect(() => {
-    if (!emblaApi) return
+    if (!emblaApi) return;
 
-    onSelect(emblaApi)
-    emblaApi.on('reInit', onSelect)
-    emblaApi.on('select', onSelect)
-  }, [emblaApi, onSelect])
+    onSelect(emblaApi);
+    emblaApi.on("reInit", onSelect);
+    emblaApi.on("select", onSelect);
+  }, [emblaApi, onSelect]);
 
-
+  const handlePreviewClick = (index: number) => {
+    emblaApi?.scrollTo(index);
+  };
 
   return (
     <>
@@ -42,7 +54,7 @@ const ImageCarousel = ({ className, images, onClick, showPreviews, aspectRatio }
         className={className}
         onClick={(e) => e.preventDefault()}
         ref={emblaRef}
-        style={{ margin: "auto"}}
+        style={{ margin: "auto" }}
       >
         <Slides>
           {images.map((image, index) => {
@@ -53,7 +65,11 @@ const ImageCarousel = ({ className, images, onClick, showPreviews, aspectRatio }
                 key={image.sys?.id || index}
               >
                 <BlurredImage src={`${image.url}?w=1000`} alt={image.title} />
-                <Image $aspectRatio={aspectRatio || 1.35} src={`${image.url}?w=1000`} alt={image.title} />
+                <Image
+                  $aspectRatio={aspectRatio || 1.35}
+                  src={`${image.url}?w=1000`}
+                  alt={image.title}
+                />
               </Slide>
             );
           })}
@@ -82,12 +98,13 @@ const ImageCarousel = ({ className, images, onClick, showPreviews, aspectRatio }
                 key={image.sys?.id || index}
                 src={`${image.url}?h=50`}
                 alt={image.title}
-                onClick={() => emblaApi?.scrollTo(index)}
+                onClick={() => handlePreviewClick(index)}
               />
             );
           })}
         </PreviewImages>
       )}
+
     </>
   );
 };

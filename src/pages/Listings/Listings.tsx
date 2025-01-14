@@ -46,6 +46,8 @@ import Hamburger from "../../components/Hamburger";
 import logoDark from "../../assets/logoDark.png";
 import logoLight from "../../assets/logoLight.png";
 import ThemeSelector from "components/ThemeSelector";
+import ApplyButton from "components/ApplyButton";
+import Header from "components/Header";
 
 const LISTINGS_QUERY = gql`
   query (
@@ -139,8 +141,7 @@ const Listings = ({ setMode }: { setMode: (mode: PaletteMode) => void }) => {
       availableDate: filters.availableDate,
     },
     errorPolicy: "all",
-  }, 
-);
+  });
 
   useEffect(() => {
     localStorage.setItem("listingsView", view);
@@ -180,31 +181,13 @@ const Listings = ({ setMode }: { setMode: (mode: PaletteMode) => void }) => {
         stabl3
       </Typography> */}
 
-      <HeaderContainer>
-        <Logo src={logo} />
-        <HeaderOptions>
-          <ThemeSelector setMode={setMode} />
-
-          {/* <LanguageSelector /> */}
-
-          <FilterButton
-            color="primary"
-            size="medium"
-            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-          >
-            <Tune fontSize="medium" />
-          </FilterButton>
-
-          <ToggleButtonGroup size="small" value={view} exclusive onChange={handleViewChange}>
-            <ToggleButton value="list">
-              <ListIcon />
-            </ToggleButton>
-            <ToggleButton value="map">
-              <MapIcon />
-            </ToggleButton>
-          </ToggleButtonGroup>
-        </HeaderOptions>
-      </HeaderContainer>
+      <Header
+        setMode={setMode}
+        isSidebarOpen={isSidebarOpen}
+        setIsSidebarOpen={setIsSidebarOpen}
+        handleViewChange={handleViewChange}
+        view={view}
+      />
 
       <ViewContainer>
         <View $sidebarOpen={isSidebarOpen}>
@@ -266,11 +249,14 @@ const Listings = ({ setMode }: { setMode: (mode: PaletteMode) => void }) => {
           </FiltersContainer>
         </Sidebar>
 
-        <SidebarButton color="primary" size="large" onClick={() => setIsSidebarOpen(true)}>
+        <SidebarButton
+          color="primary"
+          size="large"
+          onClick={() => setIsSidebarOpen(true)}
+        >
           <Tune fontSize="large" />
         </SidebarButton>
       </ViewContainer>
-      
     </ListingsContainer>
   );
 };
