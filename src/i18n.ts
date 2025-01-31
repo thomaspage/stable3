@@ -4,15 +4,12 @@ import LanguageDetector from 'i18next-browser-languagedetector';
 import enJSON from './locale/en.json'
 import frJSON from './locale/fr.json'
 
-
-const Languages = ["en", "fr"]
-
 i18n
   .use(LanguageDetector)
   .use(initReactI18next) // passes i18n down to react-i18next
   .init({
     fallbackLng: 'en',
-    supportedLngs: ["en", "fr"],
+    supportedLngs: ["en"], // ["en", "fr"],
     resources:{
       en: { ...enJSON },
       fr: { ...frJSON },
@@ -23,9 +20,9 @@ i18n
     react: {
       useSuspense: false
     },
-    // detection: {
+    detection: {
 
-    // }
+    }
   });
 
   export default i18n;
