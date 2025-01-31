@@ -2,6 +2,7 @@ import { gql, useQuery } from "@apollo/client";
 import {
   BedOutlined,
   EventAvailableOutlined,
+  Help,
   LocalAtm,
   LocationOnOutlined,
   NavigateBefore,
@@ -307,20 +308,28 @@ const Listing = ({ setMode }: { setMode: (mode: PaletteMode) => void }) => {
             </DescriptionContainer>
           )}
           <ContactContainer>
-
-            <Button variant="contained" href="https://docs.google.com/forms/d/e/1FAIpQLSdiyd8JK8_U-QHjvppensyQkHpMouI8b2cP6O6N_tfTjwZngw/viewform?usp=sf_link" target="_blank">{t("common.apply")}</Button>
-            <Button variant="text" href="mailto:stabl3.rental@gmail.com">stabl3.rental@gmail.com</Button>
-
+            <Button
+              variant="contained"
+              href="https://docs.google.com/forms/d/e/1FAIpQLSdiyd8JK8_U-QHjvppensyQkHpMouI8b2cP6O6N_tfTjwZngw/viewform?usp=sf_link"
+              target="_blank"
+            >
+              {t("common.apply")}
+            </Button>
+            <Button startIcon={<Help />} variant="outlined" href="mailto:stabl3.rental@gmail.com">
+              stabl3.rental@gmail.com
+            </Button>
           </ContactContainer>
         </DescriptionWrapper>
 
         {data.listing.amenities && (
           <AmenitiesContainer>
             <Typography variant="h5">{t("common.details")}</Typography>
-            {data.listing.amenities.map((amenity: Amenity) => {
-              const text = t(`amenities.${amenity}`);
-              return <Typography key={amenity}>- {text}</Typography>;
-            })}
+            <div style={{columnCount: 2}}>
+              {data.listing.amenities.map((amenity: Amenity) => {
+                const text = t(`amenities.${amenity}`);
+                return <Typography key={amenity}>- {text}</Typography>;
+              })}
+            </div>
           </AmenitiesContainer>
         )}
       </BodyContainer>

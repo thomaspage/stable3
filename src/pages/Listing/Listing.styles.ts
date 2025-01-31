@@ -83,9 +83,9 @@ export const DescriptionContainer = styled('div')({
 });
 
 export const AmenitiesContainer = styled('div')({
-  flexBasis: "30%",
+  flexBasis: "40%",
   flexGrow: 1,
-  minWidth: 250,
+  minWidth: 400,
 });
 
 export const AmenityText = styled(Typography)(({ theme }) => ({
@@ -143,7 +143,7 @@ export const DescriptionWrapper = styled('div')(({ theme }) => ({
   flexDirection: "column",
   gap: 50,
 
-  flexBasis: "60%",
+  flexBasis: "55%",
   flexGrow: 1,
   flexShrink: 0,  
 }));
