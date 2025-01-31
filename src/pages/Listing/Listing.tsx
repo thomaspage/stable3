@@ -27,18 +27,24 @@ import { formatCurrency, formatDate } from "../../utils";
 import {
   AmenitiesContainer,
   BodyContainer,
+  ContactContainer,
   DescriptionContainer,
+  DescriptionWrapper,
   HighlightsContainer,
   HightlightText,
   ImageCarouselModal,
   ListingContainer,
+  MapContainer,
   MobileImageCarousel,
   StyledImageCarousel,
   StyledImageList,
+  TitleContainer,
+  TitleWithMap,
 } from "./Listing.styles";
 import Header from "components/Header";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import ImageCarousel from "components/ImageCarousel";
+import Map from "components/Map";
 
 const LISTING_QUERY = gql`
   query ($id: String!, $locale: String) {
@@ -126,6 +132,20 @@ const Listing = ({ setMode }: { setMode: (mode: PaletteMode) => void }) => {
     errorPolicy: "all",
   });
 
+  const features = useMemo(
+    () =>
+      data?.listing?.location && [
+        {
+          id: data.listing.sys.id,
+          title: data.listing.title,
+          location: data.listing.location,
+          images: data.listing.imagesCollection.items.filter((x: any) => x),
+          price: data.listing.price,
+        },
+      ],
+    [data]
+  );
+
   if (loading) return null;
 
   if (data && (!data.listing || data.listing.rented)) {
@@ -193,7 +213,11 @@ const Listing = ({ setMode }: { setMode: (mode: PaletteMode) => void }) => {
       <ImageCarouselModal
         open={startIndex !== null}
         onClose={() => setStartIndex(null)}
-        style={{alignItems: "center", justifyContent: "center", display: "flex"}}
+        style={{
+          alignItems: "center",
+          justifyContent: "center",
+          display: "flex",
+        }}
       >
         <Container maxWidth="lg">
           <ImageCarousel
@@ -205,75 +229,90 @@ const Listing = ({ setMode }: { setMode: (mode: PaletteMode) => void }) => {
         </Container>
       </ImageCarouselModal>
 
-      <Typography fontWeight={700} variant="h4">
-        {data.listing.title}
-      </Typography>
-      <HighlightsContainer>
-        {data.listing.address && (
-          <HightlightText>
-            <LocationOnOutlined />
-            <strong>
-              {data.listing.location ? (
-                <StyledLink
-                  target="_blank"
-                  href={`https://maps.google.com/?q=${data.listing.location.lat},${data.listing.location.lon}`}
-                >
-                  {data.listing.address}
-                </StyledLink>
-              ) : (
-                data.listing.address
-              )}
-            </strong>
-          </HightlightText>
-        )}
-        {data.listing.price && (
-          <HightlightText>
-            <LocalAtm />
-            {price} / {t("common.month")}
-          </HightlightText>
-        )}
-        {!!data.listing.bedrooms && (
-          <HightlightText>
-            <BedOutlined /> {data.listing.bedrooms}{" "}
-            {data.listing.bedrooms > 1
-              ? t("common.bedrooms")
-              : t("common.bedroom")}
-          </HightlightText>
-        )}
-        {!!data.listing.bathrooms && (
-          <HightlightText>
-            <ShowerOutlined /> {data.listing.bathrooms}{" "}
-            {data.listing.bathrooms > 1
-              ? t("common.bathrooms")
-              : t("common.bathroom")}
-          </HightlightText>
-        )}
-        {data.listing.squareFootage && (
-          <HightlightText>
-            <SpaceDashboardOutlined />
-            {data.listing.squareFootage} {t("common.sqft")}
-          </HightlightText>
-        )}
-        {formattedDate && (
-          <HightlightText>
-            <EventAvailableOutlined />
-            {formattedDate}
-          </HightlightText>
-        )}
-      </HighlightsContainer>
+      <TitleWithMap>
+        <TitleContainer>
+          <Typography fontWeight={700} variant="h4">
+            {data.listing.title}
+          </Typography>
+          <HighlightsContainer>
+            {data.listing.address && (
+              <HightlightText>
+                <LocationOnOutlined />
+                <strong>
+                  {data.listing.location ? (
+                    <StyledLink
+                      target="_blank"
+                      href={`https://maps.google.com/?q=${data.listing.location.lat},${data.listing.location.lon}`}
+                    >
+                      {data.listing.address}
+                    </StyledLink>
+                  ) : (
+                    data.listing.address
+                  )}
+                </strong>
+              </HightlightText>
+            )}
+            {data.listing.price && (
+              <HightlightText>
+                <LocalAtm />
+                {price} / {t("common.month")}
+              </HightlightText>
+            )}
+            {!!data.listing.bedrooms && (
+              <HightlightText>
+                <BedOutlined /> {data.listing.bedrooms}{" "}
+                {data.listing.bedrooms > 1
+                  ? t("common.bedrooms")
+                  : t("common.bedroom")}
+              </HightlightText>
+            )}
+            {!!data.listing.bathrooms && (
+              <HightlightText>
+                <ShowerOutlined /> {data.listing.bathrooms}{" "}
+                {data.listing.bathrooms > 1
+                  ? t("common.bathrooms")
+                  : t("common.bathroom")}
+              </HightlightText>
+            )}
+            {data.listing.squareFootage && (
+              <HightlightText>
+                <SpaceDashboardOutlined />
+                {data.listing.squareFootage} {t("common.sqft")}
+              </HightlightText>
+            )}
+            {formattedDate && (
+              <HightlightText>
+                <EventAvailableOutlined />
+                {formattedDate}
+              </HightlightText>
+            )}
+          </HighlightsContainer>
+        </TitleContainer>
+        <MapContainer>
+          <Map features={features} />
+        </MapContainer>
+      </TitleWithMap>
 
       <BodyContainer>
-        {data.listing.description && (
-          <DescriptionContainer style={{ maxWidth: "100%" }}>
-            <Typography variant="h5">{t("common.description")}</Typography>
-            <Typography
-              variant="body1"
-              style={{ whiteSpace: "preserve-breaks" }}
-            >
-              {data.listing.description}
-            </Typography>
-          </DescriptionContainer>
-        )}
+        <DescriptionWrapper>
+          {data.listing.description && (
+            <DescriptionContainer style={{ maxWidth: "100%" }}>
+              <Typography variant="h5">{t("common.description")}</Typography>
+              <Typography
+                variant="body1"
+                style={{ whiteSpace: "preserve-breaks" }}
+              >
+                {data.listing.description}
+              </Typography>
+            </DescriptionContainer>
+          )}
+          <ContactContainer>
+
+            <Button variant="contained" href="https://docs.google.com/forms/d/e/1FAIpQLSdiyd8JK8_U-QHjvppensyQkHpMouI8b2cP6O6N_tfTjwZngw/viewform?usp=sf_link" target="_blank">{t("common.apply")}</Button>
+            <Button variant="text" href="mailto:stabl3.rental@gmail.com">stabl3.rental@gmail.com</Button>
+
+          </ContactContainer>
+        </DescriptionWrapper>
 
         {data.listing.amenities && (
           <AmenitiesContainer>

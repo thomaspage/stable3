@@ -111,15 +111,23 @@ const Map = ({ features, onPopupClick }: MapProps) => {
       });
 
       if (!bounds.isEmpty()) {
-        try {
-          map.current.fitBounds(bounds, {
-            padding: 100,
-          });
-        } catch {
-          map.current.fitBounds(bounds, {
-            padding: 20,
-          });
+
+        if (features.length === 1) {
+          map.current.setCenter(bounds.getCenter());
+          map.current.setZoom(12);
         }
+        else {
+          try {
+            map.current.fitBounds(bounds, {
+              padding: 100,
+            });
+          } catch {
+            map.current.fitBounds(bounds, {
+              padding: 20,
+            });
+          }
+        }
+
       }
 
       // make a marker for each feature and add to the map

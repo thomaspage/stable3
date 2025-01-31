@@ -79,13 +79,13 @@ export const BodyContainer = styled('div')({
 
 
 export const DescriptionContainer = styled('div')({
-  flexBasis: 500,
-  flexGrow: 1,
-  flexShrink: 0,
+
 });
 
 export const AmenitiesContainer = styled('div')({
-  flexBasis: 300,
+  flexBasis: "30%",
+  flexGrow: 1,
+  minWidth: 250,
 });
 
 export const AmenityText = styled(Typography)(({ theme }) => ({
@@ -107,4 +107,43 @@ export const HightlightText = styled(Typography)(({ theme }) => ({
   gap: 20,
   alignItems: "center",
   marginBottom: 5,
+}));
+
+export const TitleWithMap = styled('div')(({ theme }) => ({
+  display: "flex",
+  flexDirection: "row",
+  flexWrap: "wrap",
+  marginBottom: 20,
+}));
+
+export const TitleContainer = styled('div')(({ theme }) => ({
+  flexBasis: "33%",
+  flexGrow: 1,
+  minWidth: 300,
+}));
+
+export const MapContainer = styled('div')(({ theme }) => ({
+  flexBasis: "67%",
+  flexGrow: 1,
+  flexShrink: 1,
+  minHeight: 200,
+}));
+
+export const ContactContainer = styled('div')(({ theme }) => ({
+  display: "flex",
+  flexDirection: "row",
+  flexWrap: "wrap",
+  gap: 20,
+}));
+
+
+
+export const DescriptionWrapper = styled('div')(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  gap: 50,
+
+  flexBasis: "60%",
+  flexGrow: 1,
+  flexShrink: 0,  
 }));
