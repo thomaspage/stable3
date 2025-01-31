@@ -75,6 +75,7 @@ export const BodyContainer = styled('div')({
   display: "flex",
   gap: 50,
   flexWrap: "wrap",
+  marginBottom: 100,
 });
 
 
