@@ -80,6 +80,7 @@ function App() {
       mode,
       primary: {
         main: "rgb(215,133,56)",
+        contrastText: "#fff",
       }
     },
     components: {
