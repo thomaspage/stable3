@@ -11,11 +11,25 @@ import {
   StyledModal,
 } from "./ImageCarousel.styles";
 import { ImageCarouselProps } from "./ImageCarousel.types";
-import { EmblaCarouselType } from "embla-carousel";
-import useEmblaCarousel, { UseEmblaCarouselType } from "embla-carousel-react";
 import { NavigateBefore, NavigateNext } from "@mui/icons-material";
-import { useCallback, useEffect, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import { Modal } from "@mui/material";
+import { Swiper, SwiperSlide } from "swiper/react";
+// import Swiper from 'swiper/react';
+import { Navigation, Pagination } from "swiper/modules";
+
+// Import Swiper styles
+import "swiper/css/bundle";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
+import "swiper/css/scrollbar";
+import "./ImageCarousel.css";
 
 const ImageCarousel = ({
   className,
@@ -26,37 +40,12 @@ const ImageCarousel = ({
   popup,
   startIndex,
 }: ImageCarouselProps) => {
-  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: false, startIndex});
-
-  const [prevButtonDisabled, setPrevButtonDisabled] = useState(true);
-  const [nextButtonDisabled, setNextButtonDisabled] = useState(true);
-
-  const onSelect = useCallback((emblaApi: EmblaCarouselType) => {
-    setPrevButtonDisabled(!emblaApi.canScrollPrev());
-    setNextButtonDisabled(!emblaApi.canScrollNext());
-  }, []);
-
-  useEffect(() => {
-    if (!emblaApi) return;
-
-    onSelect(emblaApi);
-    emblaApi.on("reInit", onSelect);
-    emblaApi.on("select", onSelect);
-  }, [emblaApi, onSelect]);
-
-  const handlePreviewClick = (index: number) => {
-    emblaApi?.scrollTo(index);
-  };
+  // const [emblaRef, emblaApi] = useEmblaCarousel({ loop: false, startIndex});
 
   return (
     <>
-      <ImageCarouselContainer
-        className={className}
-        onClick={(e) => e.preventDefault()}
-        ref={emblaRef}
-        style={{ margin: "auto" }}
-      >
-        <Slides>
+      <ImageCarouselContainer className={className} style={{ margin: "auto" }}>
+        <Slides modules={[Navigation, Pagination]} navigation={{}}>
           {images.map((image, index) => {
             return (
               <Slide
@@ -69,28 +58,15 @@ const ImageCarousel = ({
                   $aspectRatio={aspectRatio || 1.35}
                   src={`${image.url}?w=1000`}
                   alt={image.title}
+                  // // @ts-ignore don't feel like fixing this
+                  // fetchPriority={index === (startIndex || 0) ? "high" : "low"}
                 />
               </Slide>
             );
           })}
         </Slides>
-        <NavigationButtons>
-          <NavigationButton
-            disabled={prevButtonDisabled}
-            onClick={() => emblaApi?.scrollPrev()}
-          >
-            <NavigateBefore />
-          </NavigationButton>
-
-          <NavigationButton
-            disabled={nextButtonDisabled}
-            onClick={() => emblaApi?.scrollNext()}
-          >
-            <NavigateNext />
-          </NavigationButton>
-        </NavigationButtons>
       </ImageCarouselContainer>
-      {showPreviews && (
+      {/* {showPreviews && (
         <PreviewImages>
           {images.map((image, index) => {
             return (
@@ -103,8 +79,7 @@ const ImageCarousel = ({
             );
           })}
         </PreviewImages>
-      )}
-
+      )} */}
     </>
   );
 };

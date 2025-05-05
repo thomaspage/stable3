@@ -66,7 +66,7 @@ export const TileContent = styled("div")({
 
 export const AvailabilityBadge = styled(Typography).attrs({variant: "caption"})(({theme}) => ({
   position: "absolute",
-  zIndex: 1,
+  zIndex: 10,
   top: 10,
   left: 10,
   padding: "3px 10px",

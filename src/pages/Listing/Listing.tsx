@@ -183,7 +183,7 @@ const Listing = ({ setMode }: { setMode: (mode: PaletteMode) => void }) => {
 
       <Button
         style={{ position: "sticky", top: 0, zIndex: 2 }}
-        onClick={() => navigate(-1)}
+        onClick={() => navigate("/")}
         startIcon={<NavigateBefore />}
       >
         back

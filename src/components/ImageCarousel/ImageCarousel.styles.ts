@@ -2,6 +2,7 @@ import { NavLink } from "react-router-dom";
 import { styled } from "@mui/material/styles";
 // import { styled as styled2 } from "styled-components";
 import { Button, IconButton, Modal } from "@mui/material";
+import { Swiper, SwiperSlide } from 'swiper/react';
 
 export const ImageCarouselContainer = styled("div")(
   ({  }) => ({
@@ -10,22 +11,25 @@ export const ImageCarouselContainer = styled("div")(
     userSelect: "none",
     WebkitUserSelect: "none",
     position: "relative",
+    ".swiper-button-prev, .swiper-button-next": {
+      display: "none",
+    },
 
     "&:hover": {
-      [`${NavigationButton}`]: {
+      ".swiper-button-prev, .swiper-button-next": {
         display: "unset",
       },
     },
   })
 );
 
-export const Slides = styled("div")(({}) => ({
+export const Slides = styled(Swiper)(({}) => ({
   display: "flex",
-  //   marginLeft: -20,
-  touchAction: "pan-y",
+
+  "--swiper-navigation-color": "#333",
 }));
 
-export const Slide = styled("div")<{ $clickable: boolean }>(({ $clickable }) => ({
+export const Slide = styled(SwiperSlide)<{ $clickable: boolean }>(({ $clickable }) => ({
   flex: "0 0 100%",
   minWidth: 0,
   width: "100%",
@@ -48,22 +52,24 @@ export const Slide = styled("div")<{ $clickable: boolean }>(({ $clickable }) => 
   }),
 }));
 
-export const Image = styled("img")(({$aspectRatio}: {$aspectRatio?: number}) => ({
+export const Image = styled("img")<{$aspectRatio: number}>(({$aspectRatio}) => ({
   width: "100%",
   height: "100%",
   objectFit: "contain",
   aspectRatio: $aspectRatio?.toString(),
+  // zIndex: 1,
+  // position: "relative",
   // border: "1px solid black",
   // backgroundColor: "red",
   //   borderRadius: 10,
-}) as any);
+}));
 
 export const BlurredImage = styled("img")({
   position: "absolute",
   top: -50,
   left: -50,
   objectFit: "cover",
-  zIndex:-1,
+  zIndex: -1,
   filter: "blur(50px)",
   aspectRatio: "none",
   transformOrigin: "center",
