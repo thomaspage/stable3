@@ -11,14 +11,16 @@ const ApplyButton = () => {
 
   return (
     <ApplyButtonContainer>
-      <Button 
-        variant="outlined" 
-        target="_blank" 
-        href={EXTERNAL_URLS.GOOGLE_FORM} 
-        color="inherit"
+
+      <Button variant="outlined" size="large" target='_blank' href="https://docs.google.com/forms/d/e/1FAIpQLSdiyd8JK8_U-QHjvppensyQkHpMouI8b2cP6O6N_tfTjwZngw/viewform?usp=sf_link" color="inherit"
+        sx={{
+          minHeight: 48,
+          padding: "10px 24px",
+          fontSize: "1rem",
+        }}
       >
-        {t("common.apply")}
-      </Button>
+        {t("APPLY") as string}
+        </Button>
     </ApplyButtonContainer>
   );
 };

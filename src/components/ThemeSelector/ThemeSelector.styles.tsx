@@ -21,12 +21,15 @@ export const ThemeSelectorContainer = styled("div")(({ theme }) => ({
 export const Hamburger = styled(IconButton)(({ theme }) => ({
   pointerEvents: "auto",
   minWidth: 0,
-  height: 50,
-  width: 50,
+  height: 64,
+  width: 64,
   borderRadius: 1000,
   // lineHeight: "1rem",
   textTransform: "uppercase",
   fontSize: "0.7rem",
+  "& .MuiSvgIcon-root": {
+    fontSize: 32,
+  },
   // zIndex: 1,
 
   // [theme.breakpoints.up("md")]: {

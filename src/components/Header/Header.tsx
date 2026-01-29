@@ -63,25 +63,25 @@ const Header = ({
         {setIsSidebarOpen && (
           <FilterButton
             color="primary"
-            size="medium"
+            size="large"
             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
           >
-            <Tune fontSize="medium" />
+            <Tune fontSize="large" />
           </FilterButton>
         )}
 
         {handleViewChange && (
           <ToggleButtonGroup
-            size="small"
+            size="large"
             value={view}
             exclusive
             onChange={handleViewChange}
           >
             <ToggleButton value="list">
-              <ListIcon />
+              <ListIcon fontSize="large" />
             </ToggleButton>
             <ToggleButton value="map">
-              <MapIcon />
+              <MapIcon fontSize="large" />
             </ToggleButton>
           </ToggleButtonGroup>
         )}

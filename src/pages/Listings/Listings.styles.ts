@@ -41,7 +41,7 @@ export const ListView = styled("div")({
 })
 
 export const Tiles = styled("div")({
-  padding: 30,
+  padding: "16px 30px 30px 30px",
 })
 
 export const Sidebar = styled("div")<{open: boolean}>(({theme, open}) => ({
