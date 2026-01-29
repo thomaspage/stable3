@@ -149,15 +149,17 @@ const Listings = ({ setMode }: { setMode: (mode: PaletteMode) => void }) => {
 
   const features = useMemo(
     () =>
-      data?.listingCollection.items.map((listing: any) => {
-        return {
-          id: listing.sys.id,
-          title: listing.title,
-          location: listing.location,
-          images: listing.imagesCollection.items.filter((x: any) => x),
-          price: listing.price,
-        };
-      }),
+      data?.listingCollection.items
+        .filter((listing: any) => !listing.rented)
+        .map((listing: any) => {
+          return {
+            id: listing.sys.id,
+            title: listing.title,
+            location: listing.location,
+            images: listing.imagesCollection.items.filter((x: any) => x),
+            price: listing.price,
+          };
+        }),
     [data]
   );
 
