@@ -19,36 +19,24 @@ import {
 import { setContext } from "@apollo/client/link/context";
 import Listing from "./pages/Listing";
 import mapboxgl from "mapbox-gl";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { EXTERNAL_URLS } from "./constants";
 
+// Initialize Mapbox access token
+// TODO: Move to environment variable for better security
 mapboxgl.accessToken =
   "pk.eyJ1IjoidGhvbWFzLXN0YWJsMyIsImEiOiJjbHUwN2J3dzQwMW1xMm1vMnM2ODR4ZDVoIn0.kTfOf3AxVhvuTBIN6w6k1w";
 
-export const GOOGLE_SCRIPT_URL =
-  "https://script.google.com/macros/s/AKfycbxgzAIEWC2Ijq3_ot56bgIWB7QEBh0mTY0xW1BLUbMtZS6WCm-F7tLbfQ0wYBoC5JLs9A/exec";
+// Re-export Google Script URL from constants
+export const GOOGLE_SCRIPT_URL = EXTERNAL_URLS.GOOGLE_SCRIPT;
 
-// const httpLink = new HttpLink({ uri: 'https://graphql.contentful.com/content/v1/spaces/w7j40su7ulcx/environments/master' });
-
-// const authLink = new ApolloLink((operation, forward) => {
-//   // Retrieve the authorization token from local storage.
-//   // const token = localStorage.getItem('auth_token');
-//   const token = "n22SMrCTD8Bc9wF1gldo00rsTLukTCy17yYuclaCCRU"
-
-//   // Use the setContext method to set the HTTP headers.
-//   operation.setContext({
-//     headers: {
-//       authorization: token ? `Bearer ${token}` : ''
-//     }
-//   });
-
-//   // Call the next link in the middleware chain.
-//   return forward(operation);
-// });
-
+// Configure Apollo Client HTTP link to Contentful GraphQL API
 const httpLink = createHttpLink({
   uri: "https://graphql.contentful.com/content/v1/spaces/w7j40su7ulcx/environments/master",
 });
 
+// Set up authentication for Contentful API
+// TODO: Move token to environment variable for better security
 const authLink = setContext((_, { headers }) => {
   const token = "n22SMrCTD8Bc9wF1gldo00rsTLukTCy17yYuclaCCRU";
 
@@ -60,54 +48,44 @@ const authLink = setContext((_, { headers }) => {
   };
 });
 
+// Initialize Apollo Client with auth and caching
 const client = new ApolloClient({
-  // uri: "https://graphql.contentful.com/content/v1/spaces/w7j40su7ulcx/environments/master",
   cache: new InMemoryCache(),
   link: authLink.concat(httpLink),
 });
 
 function App() {
+  // Detect user's preferred color scheme from system settings
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
+  
+  // Get stored theme preference from localStorage
   let localStorageMode = localStorage.getItem("mode") as PaletteMode;
   if (localStorageMode) {
     localStorageMode = localStorageMode === "dark" ? "dark" : "light";
   }
 
-  const [mode, setMode] = useState<"light" | "dark">(localStorageMode || (prefersDarkMode ? "dark" : "light"));
+  // Initialize theme mode with preference order: localStorage > system preference > light
+  const [mode, setMode] = useState<"light" | "dark">(
+    localStorageMode || (prefersDarkMode ? "dark" : "light")
+  );
 
+  // Create MUI theme with custom styling
   const theme = createTheme({
     palette: {
       mode,
       primary: {
-        main: "rgb(215,133,56)",
+        main: "rgb(215,133,56)", // Brand orange color
         contrastText: "#fff",
       }
     },
     components: {
       MuiButtonBase: {
         defaultProps: {
-          disableRipple: true,
+          disableRipple: true, // Disable ripple effect for cleaner UI
         },
       },
     },
     typography: {
-      h1: {
-        // fontSize: '2rem',
-        // fontWeight: 500,
-      },
-      h2: {
-        // fontSize: '1.4rem',
-        // fontWeight: 500,
-        // lineHeight: "1.5em",
-      },
-      h3: {
-        // fontSize: '1.2rem',
-        // fontWeight: 600,
-        // lineHeight: "1.5em",
-      },
-      h4: {
-        // fontFamily: "Ballantines",
-      },
       h5: {
         marginBottom: "0.25rem",
       },
@@ -120,15 +98,12 @@ function App() {
         fontWeight: 200,
       },
       button: {
-        textTransform: "unset",
+        textTransform: "unset", // Keep original case for button text
       },
-      // fontFamily: [
-      //   'PPHatton',
-      //   'serif',
-      // ].join(",")
     },
   });
 
+  // Initialize language switcher
   useLanguageSwitcher();
   
   return (
@@ -141,9 +116,7 @@ function App() {
               <Route index element={<Navigate to="/listings" replace />} />
               <Route path="listings" element={<Listings setMode={setMode} />} />
               <Route path="listings/:id" element={<Listing setMode={setMode} />} />
-
-              {/* Redirect to home */}
-              {/* Replace with 404 */}
+              {/* Catch-all route redirects to listings */}
               <Route path="*" element={<Navigate to="/listings" replace />} />
             </Route>
           </Routes>

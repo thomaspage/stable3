@@ -1,18 +1,10 @@
 import {
-  Button,
-  ButtonGroup,
-  CircularProgress,
   Grid,
   PaletteMode,
-  ToggleButton,
-  ToggleButtonGroup,
-  Typography,
-  useMediaQuery,
   useTheme,
 } from "@mui/material";
 import {
   FiltersContainer,
-  ListView,
   ListingsContainer,
   MapContainer,
   ViewContainer,
@@ -22,31 +14,16 @@ import {
   ViewInner,
   SidebarButton,
   SidebarHamburger,
-  Logo,
-  HeaderContainer,
-  HeaderOptions,
-  FilterButton,
 } from "./Listings.styles";
-import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import * as amplitude from "@amplitude/analytics-browser";
 import { gql, useQuery } from "@apollo/client";
 import Map from "../../components/Map";
 import { useEffect, useMemo, useState } from "react";
 import Tile from "./Tile";
-import { formatAddress } from "../../utils";
 import { Feature } from "../../components/Map/Map.types";
 import Filters from "./Filters";
 import { FilterTypes } from "./Filters/Fitlers.types";
-import MapIcon from "@mui/icons-material/Map";
-import ListIcon from "@mui/icons-material/List";
-import LanguageSelector from "../../components/LanguageSelector";
 import { Tune } from "@mui/icons-material";
-import Hamburger from "../../components/Hamburger";
-import logoDark from "../../assets/logoDark.png";
-import logoLight from "../../assets/logoLight.png";
-import ThemeSelector from "components/ThemeSelector";
-import ApplyButton from "components/ApplyButton";
 import Header from "components/Header";
 
 const LISTINGS_QUERY = gql`
@@ -113,14 +90,10 @@ const LISTINGS_QUERY = gql`
 
 const Listings = ({ setMode }: { setMode: (mode: PaletteMode) => void }) => {
   const {
-    t,
     i18n: { language },
   } = useTranslation();
 
-  const theme = useTheme();
-
-  const logo = theme.palette.mode === "dark" ? logoDark : logoLight;
-
+  // Get and restore user's preferred view from localStorage
   const savedView = localStorage.getItem("listingsView");
 
   const [view, setView] = useState<"map" | "list">(
@@ -130,7 +103,8 @@ const Listings = ({ setMode }: { setMode: (mode: PaletteMode) => void }) => {
   const [filters, setFilters] = useState<FilterTypes>({});
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  const { data, loading, error } = useQuery(LISTINGS_QUERY, {
+  // Fetch listings from Contentful with current filters
+  const { data } = useQuery(LISTINGS_QUERY, {
     variables: {
       locale: language,
       priceMin: filters.priceMin,
@@ -143,46 +117,48 @@ const Listings = ({ setMode }: { setMode: (mode: PaletteMode) => void }) => {
     errorPolicy: "all",
   });
 
+  // Persist user's view preference to localStorage
   useEffect(() => {
     localStorage.setItem("listingsView", view);
   }, [view]);
 
+  // Transform listings data into map features format
   const features = useMemo(
     () =>
       data?.listingCollection.items
         .filter((listing: any) => !listing.rented)
-        .map((listing: any) => {
-          return {
-            id: listing.sys.id,
-            title: listing.title,
-            location: listing.location,
-            images: listing.imagesCollection.items.filter((x: any) => x),
-            price: listing.price,
-          };
-        }),
+        .map((listing: any) => ({
+          id: listing.sys.id,
+          title: listing.title,
+          location: listing.location,
+          images: listing.imagesCollection.items.filter((x: any) => x),
+          price: listing.price,
+        })),
     [data]
   );
 
+  /**
+   * Handler for when a map popup/marker is clicked
+   * Highlights the corresponding listing in the list view
+   */
   const handlePopupClick = (feature: Feature) => {
     setActiveListingId(feature.id);
   };
 
+  /**
+   * Handler for toggling between map and list views
+   */
   const handleViewChange = (
     event: React.MouseEvent<HTMLElement>,
     newView: "list" | "map"
   ) => {
-    newView !== null && setView(newView);
+    if (newView !== null) {
+      setView(newView);
+    }
   };
 
   return (
     <ListingsContainer>
-      {/* <Typography
-        style={{ position: "absolute", top: 10, left: 10, zIndex: 1 }}
-        variant="h3"
-      >
-        stabl3
-      </Typography> */}
-
       <Header
         setMode={setMode}
         isSidebarOpen={isSidebarOpen}
@@ -211,7 +187,6 @@ const Listings = ({ setMode }: { setMode: (mode: PaletteMode) => void }) => {
                           item
                           xs={12}
                           md={isSidebarOpen ? 6 : 4}
-                          // lg={4}
                           xl={isSidebarOpen ? 4 : 3}
                           onMouseOver={() => setActiveListingId(null)}
                         >

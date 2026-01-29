@@ -1,5 +1,3 @@
-import * as amplitude from "@amplitude/analytics-browser";
-import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import {
   Button,
@@ -16,7 +14,7 @@ import ListIcon from "@mui/icons-material/List";
 import MapIcon from "@mui/icons-material/Map";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
-
+import { Tune } from "@mui/icons-material";
 import {
   FilterButton,
   HeaderContainer,
@@ -27,8 +25,11 @@ import {
 } from "./Header.styles";
 import ApplyButton from "components/ApplyButton";
 import ThemeSelector from "components/ThemeSelector";
-import { Tune } from "@mui/icons-material";
 
+/**
+ * Header component with logo, theme selector, and navigation controls
+ * Responsive with mobile hamburger menu
+ */
 const Header = ({
   setMode,
   view,
@@ -58,8 +59,6 @@ const Header = ({
         <ApplyButton />
 
         {setMode && <ThemeSelector setMode={setMode} />}
-
-        {/* <LanguageSelector /> */}
 
         {setIsSidebarOpen && (
           <FilterButton

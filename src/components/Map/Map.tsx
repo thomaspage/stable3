@@ -1,6 +1,5 @@
 import { ReactElement, useEffect, useRef, useState } from "react";
-import mapboxgl, { LngLat, MapboxGeoJSONFeature, Marker } from "mapbox-gl";
-import { FeatureCollection } from "geojson";
+import mapboxgl, { LngLat, Marker } from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import "./Map.css";
 import Popup from "./Popup";
@@ -9,19 +8,15 @@ import ImageCarousel from "../ImageCarousel";
 import { Link } from "react-router-dom";
 import { formatCurrency } from "../../utils";
 import { useTranslation } from "react-i18next";
-import { Link as StyledLink, Container, Paper, Typography, useTheme } from "@mui/material";
+import { Link as StyledLink, Paper, Typography, useTheme } from "@mui/material";
+import { DEFAULT_MAP_CENTER, DEFAULT_MAP_ZOOM, SINGLE_LISTING_ZOOM } from "../../constants";
 
 const Map = ({ features, onPopupClick }: MapProps) => {
-  const mapContainer = useRef<any>(null);
+  const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
-  const [lng, setLng] = useState(-70.9);
-  const [lat, setLat] = useState(42.35);
-  const [zoom, setZoom] = useState(9);
   const {
     i18n: { language },
   } = useTranslation();
-
-  const [color, setColor] = useState<string>();
 
   const [popup, setPopup] = useState<{
     content: ReactElement | null;
@@ -30,44 +25,42 @@ const Map = ({ features, onPopupClick }: MapProps) => {
 
   const theme = useTheme();
 
+  // Initialize map once on component mount
   useEffect(() => {
-    if (map.current) return; // initialize map only once
+    if (map.current) return; // Prevent reinitializing
 
     map.current = new mapboxgl.Map({
-      container: mapContainer.current,
-      //   style: "mapbox://styles/mapbox/streets-v12",
-      //   center: [lng, lat],
-      //   zoom: zoom,
+      container: mapContainer.current!,
       style: "mapbox://styles/mapbox/light-v11",
-      center: [-75, 45],
-      zoom: 5,
+      center: DEFAULT_MAP_CENTER,
+      zoom: DEFAULT_MAP_ZOOM,
     });
   }, []);
 
-  // Change style of map
+  // Update map style when theme changes (light/dark mode)
   useEffect(() => {
     if (!map.current) return;
 
     map.current.setStyle(`mapbox://styles/mapbox/${theme.palette.mode}-v11`);
   }, [theme.palette.mode]);
 
+  // Update markers when features change
   useEffect(() => {
     if (!map.current) return;
 
     const markers: Marker[] = [];
     const elements: HTMLElement[] = [];
-
     const bounds = new mapboxgl.LngLatBounds();
 
     setPopup(null);
 
     if (!features) return;
 
-    // add markers to map
+    // Create and add markers for each listing
     for (const feature of features) {
       if (!feature.location) continue;
 
-      // create a HTML element for each feature
+      // Create custom HTML marker element with price
       const el = document.createElement("div");
       el.className = "marker";
       el.innerHTML = formatCurrency({ amount: feature.price, language });
@@ -81,16 +74,17 @@ const Map = ({ features, onPopupClick }: MapProps) => {
 
       bounds.extend(feature.location);
 
+      // Handle marker click to show popup
       el.addEventListener("click", function (e) {
-        // Prevent the `map.on('click')` from being triggered
-        e.stopPropagation();
+        e.stopPropagation(); // Prevent map click event
 
-        // Bring marker to the front
+        // Highlight clicked marker
         elements.forEach((element) => {
           element.classList.remove("active");
         });
         el.classList.add("active");
 
+        // Show popup with listing details
         setPopup({
           content: (
             <Paper elevation={2} style={{ padding: 10 }}>
@@ -99,7 +93,9 @@ const Map = ({ features, onPopupClick }: MapProps) => {
               <p>{feature.description}</p>
               <Link to={`/listings/${feature.id}`}>
                 <StyledLink>
-                  <Typography textAlign="right" variant="body2">Go to listing →</Typography>
+                  <Typography textAlign="right" variant="body2">
+                    Go to listing →
+                  </Typography>
                 </StyledLink>
               </Link>
             </Paper>
@@ -110,37 +106,38 @@ const Map = ({ features, onPopupClick }: MapProps) => {
         onPopupClick?.(feature);
       });
 
+      // Adjust map view to fit all markers
       if (!bounds.isEmpty()) {
-
         if (features.length === 1) {
+          // Single marker: center and zoom in
           map.current.setCenter(bounds.getCenter());
-          map.current.setZoom(12);
-        }
-        else {
+          map.current.setZoom(SINGLE_LISTING_ZOOM);
+        } else {
+          // Multiple markers: fit bounds with padding
           try {
             map.current.fitBounds(bounds, {
               padding: 100,
             });
           } catch {
+            // Fallback with smaller padding if it fails
             map.current.fitBounds(bounds, {
               padding: 20,
             });
           }
         }
-
       }
 
-      // make a marker for each feature and add to the map
+      // Create and add marker to map
       const marker = new mapboxgl.Marker(el).setLngLat(feature.location);
-
       marker.addTo(map.current);
       markers.push(marker);
     }
 
+    // Cleanup: remove markers when component unmounts or features change
     return () => {
       markers.forEach((marker) => marker.remove());
     };
-  }, [features]);
+  }, [features, language, onPopupClick]);
 
   return (
     <div style={{ height: "100%" }}>

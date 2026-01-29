@@ -1,9 +1,12 @@
 import * as amplitude from "@amplitude/analytics-browser";
-import { useTranslation } from "react-i18next";
 import { Hamburger, ThemeSelectorContainer } from "./ThemeSelector.styles";
-import { IconButton, PaletteMode, useTheme } from "@mui/material";
+import { PaletteMode, useTheme } from "@mui/material";
 import { DarkMode, LightMode } from "@mui/icons-material";
 
+/**
+ * Theme selector component that toggles between light and dark modes
+ * Persists user preference to localStorage
+ */
 const ThemeSelector = ({
   setMode,
 }: {
@@ -13,17 +16,23 @@ const ThemeSelector = ({
     palette: { mode },
   } = useTheme();
 
-  const newMode = mode === "light" ? {mode: "dark", icon: DarkMode} : {mode: "light", icon: LightMode}
+  // Determine next mode and corresponding icon
+  const newMode = mode === "light" 
+    ? { mode: "dark", icon: DarkMode } 
+    : { mode: "light", icon: LightMode };
   
+  /**
+   * Toggle theme and save preference to localStorage
+   */
   const toggleTheme = () => {
-    amplitude.track("Change Theme Mode", { mode });
-    localStorage.setItem("mode", newMode.mode)
+    amplitude.track("Change Theme Mode", { mode: newMode.mode });
+    localStorage.setItem("mode", newMode.mode);
     setMode(newMode.mode as PaletteMode);
   };
 
   return (
     <ThemeSelectorContainer>
-      <Hamburger size="small" color="inherit" onClick={toggleTheme}  >
+      <Hamburger size="small" color="inherit" onClick={toggleTheme}>
         <newMode.icon fontSize="small" />
       </Hamburger>
     </ThemeSelectorContainer>

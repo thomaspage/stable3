@@ -1,4 +1,4 @@
-import { Link as StyledLink, Paper, Typography } from "@mui/material";
+import { Paper, Typography } from "@mui/material";
 import ImageCarousel from "../../../components/ImageCarousel";
 import {
   AvailabilityBadge,
@@ -10,11 +10,15 @@ import {
   Title,
 } from "./Tile.style";
 import { TileProps } from "./Tile.types";
-import { formatCurrency, formatDate, getMonth } from "../../../utils";
+import { formatCurrency, formatDate } from "../../../utils";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
 import { NoPhotography } from "@mui/icons-material";
 
+/**
+ * Tile component for displaying a rental listing in grid view
+ * Shows images, key details, and availability status
+ */
 const Tile = ({
   id,
   title,
@@ -23,14 +27,11 @@ const Tile = ({
   price,
   bathrooms,
   bedrooms,
-  // rating,
-  // thumbnail,
   images,
   squareFootage,
   active,
   rented,
-}: // fullAddress
-TileProps) => {
+}: TileProps) => {
   const {
     i18n: { language },
     t,
@@ -38,7 +39,10 @@ TileProps) => {
 
   const navigate = useNavigate();
 
-  // Get available date
+  /**
+   * Format the availability date
+   * Converts UTC date and shows "Available now" if date has passed
+   */
   const today = new Date();
   const date = new Date(availableDate);
   const utcDate = new Date(

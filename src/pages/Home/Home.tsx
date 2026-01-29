@@ -8,8 +8,11 @@ import {
 } from "./Home.styles";
 import { useTranslation } from "react-i18next";
 
-const Home = ({}) => {
-
+/**
+ * Home page component (currently not used as listings is the default route)
+ * This appears to be for a wedding/event invitation
+ */
+const Home = () => {
   const { t } = useTranslation();
   
   return (
@@ -37,7 +40,9 @@ const Home = ({}) => {
         </Place>
       </ScheduleContainer>
 
-      <Typography fontFamily="Ballantines" variant="h4">{t("pages.home.dancing")}</Typography>
+      <Typography fontFamily="Ballantines" variant="h4">
+        {t("pages.home.dancing")}
+      </Typography>
     </HomeContainer>
   );
 };

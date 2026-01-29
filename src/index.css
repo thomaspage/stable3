@@ -1,3 +1,6 @@
+/**
+ * Global styles and font definitions
+ */
 
 html, body {
   margin: 0;
@@ -16,36 +19,44 @@ a {
   text-decoration: none;
 }
 
-/* @import url('https://fonts.googleapis.com/css?family=Lato&display=swap');
-@import url('https://fonts.googleapis.com/css?family=DM+Serif+Display&display=swap'); */
-
+/* Custom font: PPHatton - Bold */
 @font-face {
   font-family: "PPHatton";
   font-weight: 700;
   src: url("fonts/PPHatton-Bold.woff") format('woff');
 }
+
+/* Custom font: PPHatton - Bold Italic */
 @font-face {
   font-family: "PPHatton";
   font-style: italic;
   font-weight: 700;
   src: url("fonts/PPHatton-BoldItalic.woff") format('woff');
 }
+
+/* Custom font: PPHatton - Medium */
 @font-face {
   font-family: "PPHatton";
   font-weight: 500;
   src: url("fonts/PPHatton-Medium.woff") format('woff');
 }
+
+/* Custom font: PPHatton - Medium Italic */
 @font-face {
   font-family: "PPHatton";
   font-style: italic;
   font-weight: 500; 
   src: url("fonts/PPHatton-MediumItalic.woff") format('woff');
 }
+
+/* Custom font: PPHatton - Ultralight */
 @font-face {
   font-family: "PPHatton";
   font-weight: 200;
   src: url("fonts/PPHatton-Ultralight.woff") format('woff');
 }
+
+/* Custom font: PPHatton - Ultralight Italic */
 @font-face {
   font-family: "PPHatton";
   font-style: italic;
@@ -53,20 +64,20 @@ a {
   src: url("fonts/PPHatton-UltralightItalic.woff") format('woff');
 }
 
+/* Custom font: Ballantines */
 @font-face {
   font-family: "Ballantines";
   src: url("fonts/ballantines.woff") format('woff');
 }
 
-
-
+/* Custom font: Cooper - Light */
 @font-face {
   font-family: "Cooper";
   font-weight: 300;
   src: url("fonts/cooperl.ttf") format('truetype');
 }
 
-
+/* Custom font: Cooper - Medium */
 @font-face {
   font-family: "Cooper";
   font-weight: 500;

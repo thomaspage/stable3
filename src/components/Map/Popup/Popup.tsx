@@ -1,23 +1,30 @@
-import React, { EffectCallback, useContext, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import mapboxgl from "mapbox-gl";
 import { PopupProps } from "./Popup.types";
 import { Paper } from "@mui/material";
-// import { mapContext } from "../Map.context";
 
+/**
+ * Popup component for displaying content on the Mapbox map
+ * Creates a Mapbox popup anchored to specific coordinates
+ */
 export const Popup = ({ children, lngLat, map }: PopupProps) => {
-
-  const popupRef = useRef<any>(null);
+  const popupRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    if (!popupRef.current) return;
 
+    // Create and configure Mapbox popup
     const popup = new mapboxgl.Popup({})
       .setLngLat(lngLat)
-      .setOffset([0, -15])
+      .setOffset([0, -15]) // Offset popup above marker
       .setDOMContent(popupRef.current)
       .addTo(map);
 
-    return popup.remove as () => void;
-  }, [children, lngLat]);
+    // Cleanup: remove popup when component unmounts or dependencies change
+    return () => {
+      popup.remove();
+    };
+  }, [children, lngLat, map]);
 
   return (
     <div style={{ display: "none" }}>

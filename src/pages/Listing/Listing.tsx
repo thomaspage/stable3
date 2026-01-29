@@ -15,14 +15,10 @@ import {
   Typography,
   Link as StyledLink,
   PaletteMode,
-  useTheme,
-  useMediaQuery,
-  Breakpoint,
-  Modal,
   Container,
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Amenity } from "../../types";
 import { formatCurrency, formatDate } from "../../utils";
 import {
@@ -43,9 +39,10 @@ import {
   TitleWithMap,
 } from "./Listing.styles";
 import Header from "components/Header";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import ImageCarousel from "components/ImageCarousel";
 import Map from "components/Map";
+import { EXTERNAL_URLS } from "../../constants";
 
 const LISTING_QUERY = gql`
   query ($id: String!, $locale: String) {
@@ -81,31 +78,37 @@ const LISTING_QUERY = gql`
   }
 `;
 
-const getImageLayout = (index: number) => {
-  switch (index) {
+/**
+ * Defines the grid layout for images based on the number of images
+ * Returns an array of [rows, cols] tuples for MUI ImageList
+ * @param imageCount - Number of images to display
+ * @returns Array of [rows, cols] tuples defining the grid layout
+ */
+const getImageLayout = (imageCount: number): [number, number][] => {
+  switch (imageCount) {
     case 1:
-      return [[4, 4]];
+      return [[4, 4]]; // Single large image
     case 2:
       return [
-        [4, 2],
+        [4, 2], // Two equal vertical images
         [4, 2],
       ];
     case 3:
       return [
-        [4, 2],
+        [4, 2], // One large left, two stacked right
         [2, 2],
         [2, 2],
       ];
     case 4:
       return [
-        [4, 2],
+        [4, 2], // One large left, three on right
         [2, 2],
         [2, 1],
         [2, 1],
       ];
     default:
       return [
-        [4, 2],
+        [4, 2], // One large left, four small on right
         [2, 1],
         [2, 1],
         [2, 1],
@@ -147,12 +150,15 @@ const Listing = ({ setMode }: { setMode: (mode: PaletteMode) => void }) => {
     [data]
   );
 
-  if (loading) return null;
+  // Redirect to listings if the listing doesn't exist or is rented
+  useEffect(() => {
+    if (!loading && data && (!data.listing || data.listing.rented)) {
+      navigate("/listings");
+    }
+  }, [data, loading, navigate]);
 
-  if (data && (!data.listing || data.listing.rented)) {
-    setTimeout(() => navigate("/"), 0);
-    return null;
-  }
+  if (loading) return null;
+  if (!data?.listing) return null;
 
   const price = formatCurrency({ amount: data.listing.price, language });
 
@@ -177,13 +183,11 @@ const Listing = ({ setMode }: { setMode: (mode: PaletteMode) => void }) => {
 
   return (
     <ListingContainer>
-      {/* <Typography>{t("pages.listing.message")}</Typography> */}
-
       <Header setMode={setMode} />
 
       <Button
         style={{ position: "sticky", top: 0, zIndex: 2 }}
-        onClick={() => navigate("/")}
+        onClick={() => navigate("/listings")}
         startIcon={<NavigateBefore />}
       >
         back
@@ -310,12 +314,16 @@ const Listing = ({ setMode }: { setMode: (mode: PaletteMode) => void }) => {
           <ContactContainer>
             <Button
               variant="contained"
-              href="https://docs.google.com/forms/d/e/1FAIpQLSdiyd8JK8_U-QHjvppensyQkHpMouI8b2cP6O6N_tfTjwZngw/viewform?usp=sf_link"
+              href={EXTERNAL_URLS.GOOGLE_FORM}
               target="_blank"
             >
               {t("common.apply")}
             </Button>
-            <Button startIcon={<Help />} variant="outlined" href="mailto:stabl3.rental@gmail.com">
+            <Button 
+              startIcon={<Help />} 
+              variant="outlined" 
+              href={EXTERNAL_URLS.EMAIL}
+            >
               stabl3.rental@gmail.com
             </Button>
           </ContactContainer>

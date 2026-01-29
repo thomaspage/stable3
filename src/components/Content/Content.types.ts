@@ -1,5 +1,9 @@
-import { ReactElement } from "react";
+import { ReactNode } from "react";
 
+/**
+ * Props for the Content wrapper component
+ */
 export interface ContentTypes {
-    children: ReactElement
+    /** Child elements to render within the content container */
+    children: ReactNode;
 }

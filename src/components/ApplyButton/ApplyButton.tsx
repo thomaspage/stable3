@@ -1,20 +1,24 @@
-import * as amplitude from '@amplitude/analytics-browser';
 import { useTranslation } from "react-i18next";
-import {
-  Hamburger,
-  ApplyButtonContainer,
-} from "./ApplyButton.styles";
-import { Button, IconButton } from '@mui/material';
+import { ApplyButtonContainer } from "./ApplyButton.styles";
+import { Button } from "@mui/material";
+import { EXTERNAL_URLS } from "../../constants";
 
-const ApplyButton = ({}) => {
-
+/**
+ * Apply button component that links to the Google Form application
+ */
+const ApplyButton = () => {
   const { t } = useTranslation();
 
   return (
     <ApplyButtonContainer>
-
-      <Button variant="outlined" target='_blank' href="https://docs.google.com/forms/d/e/1FAIpQLSdiyd8JK8_U-QHjvppensyQkHpMouI8b2cP6O6N_tfTjwZngw/viewform?usp=sf_link" color="inherit">{t("APPLY") as string}</Button>
-
+      <Button 
+        variant="outlined" 
+        target="_blank" 
+        href={EXTERNAL_URLS.GOOGLE_FORM} 
+        color="inherit"
+      >
+        {t("common.apply")}
+      </Button>
     </ApplyButtonContainer>
   );
 };
