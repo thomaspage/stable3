@@ -30,7 +30,8 @@
             "parkingonstreet": "Street parking",
             "washerdryerready": "Washer/Dryer ready",
             "noappliances": "No appliances",
-            "petsok": "Pets allowed"
+            "petsok": "Pets allowed",
+            "exteriorstorage": "Exterior storage"
         },
         "common": {
             "availableNow": "Available now",
