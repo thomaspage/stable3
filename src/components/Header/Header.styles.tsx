@@ -9,46 +9,70 @@ export const HeaderContainer = styled("div")({
   flexDirection: "row",
   justifyContent: "space-between",
   alignItems: "center",
+  maxWidth: "100%",
+  overflow: "hidden",
 });
 
-export const HeaderOptions = styled("div")({
+export const HeaderOptions = styled("div")(({theme}) => ({
   display: "flex",
   flexDirection: "row",
   justifyContent: "space-between",
   alignItems: "center",
   padding: 20,
   gap: 10,
-});
+  flexWrap: "nowrap",
+  
+  [theme.breakpoints.down("md")]: {
+    display: "none",
+  }
+}));
 
 export const Logo = styled("img")(({theme}) => ({
   height: 100,
   margin: "10px",
-  // width: "100%",
-  // height: "100%",
-  // objectFit: "contain",
-  // aspectRatio: "3/2",
-  // border: "1px solid black",
-  // backgroundColor: "red",
-  //   borderRadius: 10,
+  flexShrink: 0,
+  
+  [theme.breakpoints.down("md")]: {
+    height: 60,
+    margin: "5px",
+  },
+  
   [theme.breakpoints.down("sm")]: {
-    height: 75,
+    height: 50,
+    margin: "5px",
   }
 }));
 
 
 export const FilterButton = styled(IconButton)(({theme}) => ({
-
   backgroundColor: theme.palette.background.default,
   pointerEvents: "auto",
   minWidth: 0,
   height: 50,
   width: 50,
   borderRadius: 1000,
-  // lineHeight: "1rem",
   textTransform: "uppercase",
   fontSize: "0.9rem",
 
   [theme.breakpoints.down("sm")]: {
     display: "none",
   }
+}));
+
+export const MobileMenuButton = styled(IconButton)(({theme}) => ({
+  display: "none",
+  flexShrink: 0,
+  
+  [theme.breakpoints.down("md")]: {
+    display: "flex",
+    marginRight: 10,
+  }
+}));
+
+export const MobileDrawerContent = styled("div")(({theme}) => ({
+  display: "flex",
+  flexDirection: "column",
+  gap: 20,
+  padding: 20,
+  minWidth: 250,
 }))

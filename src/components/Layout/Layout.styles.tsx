@@ -5,12 +5,10 @@ export const LayoutContainer = styled(Paper).attrs({ elevation: 0, square: true 
   ({ theme }) => ({
     display: "flex",
     flexDirection: "column",
-    // alignItems: "center",
-    // justifyContent: "center",
     height: "100vh",
     overflow: "auto",
-
-    // backgroundColor: theme.palette.background.default,
+    maxWidth: "100vw",
+    overflowX: "hidden",
   })
 );
 
