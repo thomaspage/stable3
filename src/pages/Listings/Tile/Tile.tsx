@@ -1,4 +1,4 @@
-import { Paper, Typography } from "@mui/material";
+import { Paper, Typography, useTheme, useMediaQuery } from "@mui/material";
 import ImageCarousel from "../../../components/ImageCarousel";
 import {
   AvailabilityBadge,
@@ -55,6 +55,9 @@ const Tile = ({
       ? t("common.availableNow")
       : formatDate({ date: utcDate, language });
 
+  const theme = useTheme();
+  const showPreviewsForScreen = useMediaQuery(theme.breakpoints.down('md'));
+
   return (
     <TileContainer $active={active}>
       {rented ? (
@@ -69,6 +72,8 @@ const Tile = ({
               <ImageCarousel
                 images={images}
                 onClick={(index) => navigate(`/listings/${id}`)}
+                // Show previews only on mobile/tablet (md and below)
+                showPreviews={showPreviewsForScreen}
               />
             ) : (
               <NoPhotography />

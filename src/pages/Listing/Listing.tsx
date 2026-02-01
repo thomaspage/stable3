@@ -23,6 +23,7 @@ import { Amenity } from "../../types";
 import { formatCurrency, formatDate } from "../../utils";
 import {
   AmenitiesContainer,
+  AmenitiesList,
   BodyContainer,
   ContactContainer,
   DescriptionContainer,
@@ -332,12 +333,12 @@ const Listing = ({ setMode }: { setMode: (mode: PaletteMode) => void }) => {
         {data.listing.amenities && (
           <AmenitiesContainer>
             <Typography variant="h5">{t("common.details")}</Typography>
-            <div style={{columnCount: 2}}>
+            <AmenitiesList>
               {data.listing.amenities.map((amenity: Amenity) => {
                 const text = t(`amenities.${amenity}`);
                 return <Typography key={amenity}>- {text}</Typography>;
               })}
-            </div>
+            </AmenitiesList>
           </AmenitiesContainer>
         )}
       </BodyContainer>

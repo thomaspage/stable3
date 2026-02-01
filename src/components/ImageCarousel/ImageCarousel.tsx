@@ -1,9 +1,12 @@
+import { useState, useRef } from "react";
 import {
   BlurredImage,
   Image,
   ImageCarouselContainer,
   Slide,
   Slides,
+  PreviewImages,
+  PreviewImage,
 } from "./ImageCarousel.styles";
 import { ImageCarouselProps } from "./ImageCarousel.types";
 import { Navigation, Pagination } from "swiper/modules";
@@ -24,10 +27,16 @@ const ImageCarousel = ({
   images,
   onClick,
   aspectRatio,
+  showPreviews,
 }: ImageCarouselProps) => {
+  const [swiperInstance, setSwiperInstance] = useState<any | null>(null);
+
+  // Determine whether to show previews: explicit prop OR mobile/tablet by default
+  const shouldShowPreviews = showPreviews ?? undefined;
+
   return (
     <ImageCarouselContainer className={className} style={{ margin: "auto" }}>
-      <Slides modules={[Navigation, Pagination]} navigation={{}}>
+      <Slides modules={[Navigation, Pagination]} navigation={{}} onSwiper={setSwiperInstance}>
         {images.map((image, index) => (
           <Slide
             $clickable={!!onClick}
@@ -43,6 +52,19 @@ const ImageCarousel = ({
           </Slide>
         ))}
       </Slides>
+
+      {/* Show simple preview thumbnails for quick swipe affordance (particularly useful on mobile/tablet) */}
+      {(showPreviews ?? false) && images.length > 1 && (
+        <PreviewImages>
+          {images.map((img, idx) => (
+            <PreviewImage
+              key={img.sys?.id || idx}
+              src={`${img.url}?w=200`}
+              onClick={() => swiperInstance?.slideTo(idx)}
+            />
+          ))}
+        </PreviewImages>
+      )}
     </ImageCarouselContainer>
   );
 };

@@ -2,6 +2,7 @@ import {
   Grid,
   PaletteMode,
   useTheme,
+  Button,
 } from "@mui/material";
 import {
   FiltersContainer,
@@ -25,6 +26,8 @@ import Filters from "./Filters";
 import { FilterTypes } from "./Filters/Fitlers.types";
 import { Tune } from "@mui/icons-material";
 import Header from "components/Header";
+import { NotFoundContainer } from "../NotFound/NotFound.styles";
+import { NotFoundCard, NotFoundTitle, NotFoundBody } from "../NotFound/NotFound.styles";
 
 const LISTINGS_QUERY = gql`
   query (
@@ -177,40 +180,71 @@ const Listings = ({ setMode }: { setMode: (mode: PaletteMode) => void }) => {
             )}
 
             {view === "list" && (
-              <Tiles>
-                <Grid container spacing={3}>
-                  {data?.listingCollection.items
-                    .map((listing: any) => {
-                      return (
-                        <Grid
-                          key={listing.sys.id}
-                          item
-                          xs={12}
-                          md={isSidebarOpen ? 6 : 4}
-                          xl={isSidebarOpen ? 4 : 3}
-                          onMouseOver={() => setActiveListingId(null)}
-                        >
-                          <Tile
-                            id={listing.sys.id}
-                            availableDate={listing.availableDate}
-                            title={listing.title}
-                            description={listing.shortKeyDescription}
-                            bathrooms={listing.bathrooms}
-                            bedrooms={listing.bedrooms}
-                            squareFootage={listing.squareFootage}
-                            price={listing.price}
-                            images={listing.imagesCollection.items.filter(
-                              (x: any) => x
-                            )}
-                            active={activeListingId === listing.sys.id}
-                            rented={listing.rented}
-                          />
-                        </Grid>
-                      );
-                    })
-                    .reverse()}
-                </Grid>
-              </Tiles>
+              // If there are no listings returned for the current filters, show the NotFound-style card
+              !(features?.length) ? (
+                <Tiles>
+                  <Grid container>
+                    <Grid item xs={12}>
+                      <NotFoundContainer>
+                        <NotFoundCard>
+                          <NotFoundTitle variant="h4">No units available</NotFoundTitle>
+                          <NotFoundBody>
+                            Sorry, there are no listings that match your filters. Try
+                            adjusting your filters or reset them to see all listings again.
+                          </NotFoundBody>
+
+                          <Button
+                            variant="contained"
+                            color="primary"
+                            size="large"
+                            onClick={() => {
+                              setFilters({});
+                              setIsSidebarOpen(false);
+                            }}
+                          >
+                            Reset filters
+                          </Button>
+                        </NotFoundCard>
+                      </NotFoundContainer>
+                    </Grid>
+                  </Grid>
+                </Tiles>
+              ) : (
+                <Tiles>
+                  <Grid container spacing={3}>
+                    {data?.listingCollection.items
+                      .map((listing: any) => {
+                        return (
+                          <Grid
+                            key={listing.sys.id}
+                            item
+                            xs={12}
+                            md={isSidebarOpen ? 6 : 4}
+                            xl={isSidebarOpen ? 4 : 3}
+                            onMouseOver={() => setActiveListingId(null)}
+                          >
+                            <Tile
+                              id={listing.sys.id}
+                              availableDate={listing.availableDate}
+                              title={listing.title}
+                              description={listing.shortKeyDescription}
+                              bathrooms={listing.bathrooms}
+                              bedrooms={listing.bedrooms}
+                              squareFootage={listing.squareFootage}
+                              price={listing.price}
+                              images={listing.imagesCollection.items.filter(
+                                (x: any) => x
+                              )}
+                              active={activeListingId === listing.sys.id}
+                              rented={listing.rented}
+                            />
+                          </Grid>
+                        );
+                      })
+                      .reverse()}
+                  </Grid>
+                </Tiles>
+              )
             )}
           </ViewInner>
         </View>
@@ -229,7 +263,7 @@ const Listings = ({ setMode }: { setMode: (mode: PaletteMode) => void }) => {
         <SidebarButton
           color="primary"
           size="large"
-          onClick={() => setIsSidebarOpen(true)}
+          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
         >
           <Tune fontSize="large" />
         </SidebarButton>

@@ -2,15 +2,31 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+    <!-- Favicon and touch icon placeholders. Replace these PNG/SVG files in the `public/` folder with your final images. -->
+    <link rel="icon" type="image/svg+xml" href="%PUBLIC_URL%/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="%PUBLIC_URL%/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="%PUBLIC_URL%/favicon-16x16.png" />
+    <link rel="apple-touch-icon" href="%PUBLIC_URL%/apple-touch-icon.png" />
+    <link rel="mask-icon" href="%PUBLIC_URL%/website_icon.svg" color="#d78538">
+
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#ffffff" />
-    <meta
-      name="description"
-      content="Web site created using create-react-app"
-    />
-    <link rel="apple-touch-icon" href="%PUBLIC_URL%/android-chrome-192x192.png" />
-    <link rel="mask-icon" href="%PUBLIC_URL%/website_icon.svg" color="red">
+
+    <!-- Basic site description (used if a page does not set its own meta description) -->
+    <meta name="description" content="STABL3 — Find quality rentals and apply online." />
+
+    <!-- Open Graph / Link preview defaults (replace image with a real image at build time) -->
+    <meta property="og:title" content="STABL3 — Quality rentals" />
+    <meta property="og:description" content="Find rentals and apply online. View listings on a map." />
+    <meta property="og:image" content="%PUBLIC_URL%/og-image.svg" />
+    <meta property="og:type" content="website" />
+
+    <!-- Twitter card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="STABL3 — Quality rentals" />
+    <meta name="twitter:description" content="Find rentals and apply online. View listings on a map." />
+    <meta name="twitter:image" content="%PUBLIC_URL%/og-image.svg" />
+
     <!--
       manifest.json provides metadata used when your web app is installed on a
       user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/

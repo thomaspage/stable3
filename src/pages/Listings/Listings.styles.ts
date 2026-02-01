@@ -129,14 +129,21 @@ export const FilterButton = styled(IconButton)(({theme}) => ({
 
 export const SidebarButton = styled(IconButton)(({theme}) => ({
 
-  position: "absolute",
-  right: 15,
-  bottom: 15,
+  // Keep button visible and accessible above content; use fixed positioning on mobile so
+  // it sits above system UI (safe area) and scrolling content.
+  position: "fixed",
+  right: '16px',
+  bottom: `calc(16px + env(safe-area-inset-bottom, 0px))`,
   backgroundColor: theme.palette.background.default,
 
   boxShadow: theme.shadows[5],
-
-  [theme.breakpoints.up("sm")]: {
+  zIndex: theme.zIndex.tooltip + 10,
+  // Keep background solid on hover so the button doesn't become transparent over listings
+  '&:hover': {
+    backgroundColor: theme.palette.background.default,
+  },
+  // Hide on large desktops only — show on mobile and tablet
+  [theme.breakpoints.up("lg")]: {
     display: "none",
   }
 }))

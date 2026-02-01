@@ -67,6 +67,11 @@ export const FilterButton = styled(IconButton)(({theme}) => ({
     fontSize: 32,
   },
 
+  // Keep background solid on hover to avoid transparent look
+  '&:hover': {
+    backgroundColor: theme.palette.background.default,
+  },
+
   [theme.breakpoints.down("sm")]: {
     display: "none",
   }
@@ -78,7 +83,9 @@ export const MobileMenuButton = styled(IconButton)(({ theme }) => ({
 
   [theme.breakpoints.down("md")]: {
     display: "flex",
-    padding: 16,
+    // keep left padding for tap target, reduce right padding so the button's right edge
+    // lines up with the content below
+    padding: '16px 8px 16px 20px',
     "& .MuiSvgIcon-root": {
       fontSize: 40,
     },
@@ -86,14 +93,14 @@ export const MobileMenuButton = styled(IconButton)(({ theme }) => ({
 
   // iPad/medium resolution - larger size
   [theme.breakpoints.between("sm", "md")]: {
-    padding: 24,
+    padding: '20px 8px 20px 24px',
     "& .MuiSvgIcon-root": {
       fontSize: 56,
     },
   },
 
   [theme.breakpoints.down("sm")]: {
-    padding: 20,
+    padding: '12px 8px 12px 16px',
     "& .MuiSvgIcon-root": {
       fontSize: 48,
     },

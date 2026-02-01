@@ -89,6 +89,15 @@ export const AmenitiesContainer = styled('div')({
   minWidth: 400,
 });
 
+// Responsive list for amenities: two columns on desktop, one column on small screens
+export const AmenitiesList = styled('div')(({ theme }) => ({
+  columnCount: 2,
+  columnGap: 24,
+  [theme.breakpoints.down('sm')]: {
+    columnCount: 1,
+  },
+}));
+
 export const AmenityText = styled(Typography)(({ theme }) => ({
   display: "flex",
   flexDirection: "row",
