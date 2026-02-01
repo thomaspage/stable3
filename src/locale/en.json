@@ -46,7 +46,7 @@
             "month": "month",
             "details": "Rental Details",
             "description": "Description",
-            "monthlyRent"   : "monthly rent",
+            "monthlyRent"   : "monthly Rent",
             "availableDate": "Available {{date}}",
             "rented": "Rented",
             "apply": "Apply"

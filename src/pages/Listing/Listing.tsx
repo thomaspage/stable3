@@ -147,6 +147,11 @@ const Listing = ({ setMode }: { setMode: (mode: PaletteMode) => void }) => {
           location: data.listing.location,
           images: data.listing.imagesCollection.items.filter((x: any) => x),
           price: data.listing.price,
+          bedrooms: data.listing.bedrooms,
+          bathrooms: data.listing.bathrooms,
+          squareFootage: data.listing.squareFootage,
+          address: data.listing.address,
+          availableDate: data.listing.availableDate,
         },
       ],
     [data]
@@ -189,7 +194,11 @@ const Listing = ({ setMode }: { setMode: (mode: PaletteMode) => void }) => {
 
       <Button
         style={{ position: "sticky", top: 0, zIndex: 2 }}
-        onClick={() => navigate("/listings")}
+        onClick={() => {
+          // Ensure listings open in list view when returning from a single listing
+          localStorage.setItem('listingsView', 'list');
+          navigate("/listings");
+        }}
         startIcon={<NavigateBefore sx={{ fontSize: 28 }} />}
         sx={{ fontSize: '1rem', textTransform: 'none' }}
       >
@@ -295,7 +304,7 @@ const Listing = ({ setMode }: { setMode: (mode: PaletteMode) => void }) => {
           </HighlightsContainer>
         </TitleContainer>
         <MapContainer>
-          <Map features={features} />
+          <Map features={features} allowMarkerPopups={false} />
         </MapContainer>
       </TitleWithMap>
 

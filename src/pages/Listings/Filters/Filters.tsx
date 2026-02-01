@@ -105,11 +105,24 @@ const Filters = ({ filters, setFilters }: FiltersProps) => {
     }, 1000);
   }, [bedrooms, prices, bathrooms, amenities, availableDate, setFilters]);
 
+  const resetToDefault = () => {
+    setPrices([PRICE_RANGE.MIN, PRICE_RANGE.MAX]);
+    setBedrooms(new Set());
+    setBathrooms(new Set());
+    setAmenities(new Set());
+    setAvailableDate("");
+    setFilters({});
+  };
+
   return (
     <FiltersContainer>
       <Capitalized>{t("common.monthlyRent")}</Capitalized>
 
-      <div style={{ padding: 25, paddingTop: 50 }}>
+      <div style={{ padding: 12 }}>
+        
+      </div>
+
+      <div style={{ padding: 25, paddingTop: 8 }}>
         <Slider
           getAriaValueText={(value) => `$${value}`}
           defaultValue={[PRICE_RANGE.MIN, PRICE_RANGE.MAX]}
@@ -153,6 +166,12 @@ const Filters = ({ filters, setFilters }: FiltersProps) => {
           </Button>
         ))}
       </ButtonsContainer>
+
+      <div style={{ padding: 12, paddingTop: 26 }}>
+        <Button variant="contained" color="primary" fullWidth onClick={resetToDefault}>
+          Reset Filters
+        </Button>
+      </div>
     </FiltersContainer>
   );
 }; 

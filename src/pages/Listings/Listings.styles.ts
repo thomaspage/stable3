@@ -67,13 +67,17 @@ export const Sidebar = styled("div")<{open: boolean}>(({theme, open}) => ({
   [theme.breakpoints.down("sm")]: {
 
     ...(open ? {
-      background: theme.palette.background.default,
-      position: "absolute",
+      // Cover the full viewport and sit above all content so underlying listings don't show through
+      background: theme.palette.background.paper,
+      position: "fixed",
       top: 0,
       right: 0,
       bottom: 0,
       left: 0,
-      zIndex: 1,
+      zIndex: theme.zIndex.modal,
+      overflowY: 'auto',
+      WebkitOverflowScrolling: 'touch',
+      padding: 20,
     } : {
       display: "none",
     })
@@ -127,7 +131,7 @@ export const FilterButton = styled(IconButton)(({theme}) => ({
   }
 }))
 
-export const SidebarButton = styled(IconButton)(({theme}) => ({
+export const SidebarButton = styled(IconButton)<{active?: boolean}>(({theme, active}) => ({
 
   // Keep button visible and accessible above content; use fixed positioning on mobile so
   // it sits above system UI (safe area) and scrolling content.
@@ -138,6 +142,10 @@ export const SidebarButton = styled(IconButton)(({theme}) => ({
 
   boxShadow: theme.shadows[5],
   zIndex: theme.zIndex.tooltip + 10,
+  border: active ? `3px solid ${theme.palette.warning.main}` : undefined,
+  '& .MuiSvgIcon-root': {
+    color: active ? theme.palette.warning.main : undefined,
+  },
   // Keep background solid on hover so the button doesn't become transparent over listings
   '&:hover': {
     backgroundColor: theme.palette.background.default,

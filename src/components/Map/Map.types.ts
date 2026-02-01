@@ -12,13 +12,19 @@ export interface Feature {
     /** Listing title */
     title: string;
     /** Brief description */
-    description: string;
+    description?: string;
     /** Array of listing images */
-    images: Image[];
+    images?: Image[];
     /** Unique identifier */
     id: string;
     /** Monthly rent price */
-    price: number;
+    price?: number;
+    /** Optional highlights */
+    bedrooms?: number;
+    bathrooms?: number;
+    squareFootage?: number;
+    address?: string;
+    availableDate?: string;
 }
 
 /**
@@ -29,4 +35,6 @@ export interface MapProps {
     features: Feature[];
     /** Optional callback when a map popup/marker is clicked */
     onPopupClick?: (feature: Feature) => void;
+    /** When false, clicking markers does not open popups (used on single-listing page) */
+    allowMarkerPopups?: boolean;
 }

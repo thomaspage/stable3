@@ -28,14 +28,16 @@ const ImageCarousel = ({
   onClick,
   aspectRatio,
   showPreviews,
+  popup,
+  style,
 }: ImageCarouselProps) => {
   const [swiperInstance, setSwiperInstance] = useState<any | null>(null);
 
-  // Determine whether to show previews: explicit prop OR mobile/tablet by default
-  const shouldShowPreviews = showPreviews ?? undefined;
+  // Determine whether to show previews: explicit prop or fallback to false
+  const shouldShowPreviews = showPreviews ?? false;
 
   return (
-    <ImageCarouselContainer className={className} style={{ margin: "auto" }}>
+    <ImageCarouselContainer className={className} style={{ margin: "auto", ...(style || {}) }}>
       <Slides modules={[Navigation, Pagination]} navigation={{}} onSwiper={setSwiperInstance}>
         {images.map((image, index) => (
           <Slide
@@ -43,7 +45,7 @@ const ImageCarousel = ({
             onClick={() => onClick?.(index)}
             key={image.sys?.id || index}
           >
-            <BlurredImage src={`${image.url}?w=1000`} alt={image.title} />
+            {!popup && <BlurredImage src={`${image.url}?w=1000`} alt={image.title} />}
             <Image
               $aspectRatio={aspectRatio || 1.35}
               src={`${image.url}?w=1000`}
@@ -54,7 +56,7 @@ const ImageCarousel = ({
       </Slides>
 
       {/* Show simple preview thumbnails for quick swipe affordance (particularly useful on mobile/tablet) */}
-      {(showPreviews ?? false) && images.length > 1 && (
+      {shouldShowPreviews && images.length > 1 && (
         <PreviewImages>
           {images.map((img, idx) => (
             <PreviewImage

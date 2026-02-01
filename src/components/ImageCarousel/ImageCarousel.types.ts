@@ -8,6 +8,8 @@ export interface ImageCarouselProps {
     images: Image[];
     /** Optional CSS class name for styling */
     className?: HTMLElement["className"];
+    /** Optional inline style for the container */
+    style?: React.CSSProperties;
     /** Optional callback when an image is clicked */
     onClick?: (index: number) => void;
     /** Whether to show image previews (currently not implemented) */

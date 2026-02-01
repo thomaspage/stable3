@@ -8,6 +8,7 @@ import {
   useTheme,
   Drawer,
 } from "@mui/material";
+import { Link } from 'react-router-dom';
 import logoDark from "../../assets/logoDark.png";
 import logoLight from "../../assets/logoLight.png";
 import ListIcon from "@mui/icons-material/List";
@@ -37,6 +38,7 @@ const Header = ({
   setIsSidebarOpen,
   isSidebarOpen,
   alignWithContainer,
+  filtersActive,
 }: {
   setMode?: (mode: PaletteMode) => void;
   view?: "map" | "list";
@@ -47,6 +49,7 @@ const Header = ({
   setIsSidebarOpen?: (open: boolean) => void;
   isSidebarOpen?: boolean;
   alignWithContainer?: boolean;
+  filtersActive?: boolean;
 }) => {
   const theme = useTheme();
   const logo = theme.palette.mode === "dark" ? logoDark : logoLight;
@@ -54,7 +57,9 @@ const Header = ({
 
   return (
     <HeaderContainer alignWithContainer={alignWithContainer}>
-      <Logo src={logo} />
+      <Link to="/listings" style={{ display: 'inline-flex', alignItems: 'center' }} onClick={(e) => { handleViewChange?.(e as any, 'list'); }}>
+        <Logo src={logo} />
+      </Link>
       
       {/* Desktop Options */}
       <HeaderOptions>
@@ -64,6 +69,7 @@ const Header = ({
 
         {setIsSidebarOpen && (
           <FilterButton
+            active={filtersActive}
             color="primary"
             size="large"
             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
@@ -124,6 +130,7 @@ const Header = ({
                 setMobileMenuOpen(false);
               }}
               startIcon={<Tune />}
+              sx={filtersActive ? { border: `3px solid ${theme.palette.warning.main}` } : undefined}
             >
               Filters
             </Button>

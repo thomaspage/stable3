@@ -24,8 +24,9 @@ import Tile from "./Tile";
 import { Feature } from "../../components/Map/Map.types";
 import Filters from "./Filters";
 import { FilterTypes } from "./Filters/Fitlers.types";
-import { Tune } from "@mui/icons-material";
+import { Tune, Help } from "@mui/icons-material";
 import Header from "components/Header";
+import { EXTERNAL_URLS } from "../../constants";
 import { NotFoundContainer } from "../NotFound/NotFound.styles";
 import { NotFoundCard, NotFoundTitle, NotFoundBody } from "../NotFound/NotFound.styles";
 
@@ -106,6 +107,16 @@ const Listings = ({ setMode }: { setMode: (mode: PaletteMode) => void }) => {
   const [filters, setFilters] = useState<FilterTypes>({});
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
+  // Determine whether any non-default filter is active
+  const filtersActive = useMemo(() => {
+    return Object.values(filters).some((v) => {
+      if (v === undefined || v === null) return false;
+      if (Array.isArray(v)) return v.length > 0;
+      if (typeof v === 'object') return Object.keys(v).length > 0;
+      return true;
+    });
+  }, [filters]);
+
   // Fetch listings from Contentful with current filters
   const { data } = useQuery(LISTINGS_QUERY, {
     variables: {
@@ -136,6 +147,11 @@ const Listings = ({ setMode }: { setMode: (mode: PaletteMode) => void }) => {
           location: listing.location,
           images: listing.imagesCollection.items.filter((x: any) => x),
           price: listing.price,
+          bedrooms: listing.bedrooms,
+          bathrooms: listing.bathrooms,
+          squareFootage: listing.squareFootage,
+          address: listing.city,
+          availableDate: listing.availableDate,
         })),
     [data]
   );
@@ -168,6 +184,7 @@ const Listings = ({ setMode }: { setMode: (mode: PaletteMode) => void }) => {
         setIsSidebarOpen={setIsSidebarOpen}
         handleViewChange={handleViewChange}
         view={view}
+        filtersActive={filtersActive}
       />
 
       <ViewContainer>
@@ -187,23 +204,35 @@ const Listings = ({ setMode }: { setMode: (mode: PaletteMode) => void }) => {
                     <Grid item xs={12}>
                       <NotFoundContainer>
                         <NotFoundCard>
-                          <NotFoundTitle variant="h4">No units available</NotFoundTitle>
+                          <NotFoundTitle variant="h4">Sorry :( <p>No units match your criterias.</p></NotFoundTitle>
                           <NotFoundBody>
-                            Sorry, there are no listings that match your filters. Try
-                            adjusting your filters or reset them to see all listings again.
+                            Try adjusting your filters or reset them to see all listings again.
+                            <p>You may contact STABL3 to ask about unlisted options.</p>
                           </NotFoundBody>
 
-                          <Button
-                            variant="contained"
-                            color="primary"
-                            size="large"
-                            onClick={() => {
-                              setFilters({});
-                              setIsSidebarOpen(false);
-                            }}
-                          >
-                            Reset filters
-                          </Button>
+                          <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+                            <Button
+                              variant="contained"
+                              color="primary"
+                              size="large"
+                              onClick={() => {
+                                setFilters({});
+                                setIsSidebarOpen(false);
+                              }}
+                            >
+                              Reset filters
+                            </Button>
+
+                            <Button 
+                              startIcon={<Help />} 
+                              variant="outlined" 
+                              size="large"
+                              href={EXTERNAL_URLS.EMAIL}
+                            >
+                              stabl3.rental@gmail.com
+                            </Button>
+                          </div>
+                          
                         </NotFoundCard>
                       </NotFoundContainer>
                     </Grid>
@@ -263,6 +292,7 @@ const Listings = ({ setMode }: { setMode: (mode: PaletteMode) => void }) => {
         <SidebarButton
           color="primary"
           size="large"
+          active={filtersActive}
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
         >
           <Tune fontSize="large" />

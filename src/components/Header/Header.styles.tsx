@@ -54,7 +54,7 @@ export const Logo = styled("img")(({ theme }) => ({
 }));
 
 
-export const FilterButton = styled(IconButton)(({theme}) => ({
+export const FilterButton = styled(IconButton)<{active?: boolean}>(({theme, active}) => ({
   backgroundColor: theme.palette.background.default,
   pointerEvents: "auto",
   minWidth: 0,
@@ -63,8 +63,10 @@ export const FilterButton = styled(IconButton)(({theme}) => ({
   borderRadius: 1000,
   textTransform: "uppercase",
   fontSize: "0.9rem",
+  border: active ? `3px solid ${theme.palette.warning.main}` : undefined,
   "& .MuiSvgIcon-root": {
     fontSize: 32,
+    color: active ? theme.palette.warning.main : undefined,
   },
 
   // Keep background solid on hover to avoid transparent look
@@ -80,12 +82,18 @@ export const FilterButton = styled(IconButton)(({theme}) => ({
 export const MobileMenuButton = styled(IconButton)(({ theme }) => ({
   display: "none",
   flexShrink: 0,
+  borderRadius: 1000,
+  alignItems: 'center',
+  justifyContent: 'center',
 
   [theme.breakpoints.down("md")]: {
     display: "flex",
-    // keep left padding for tap target, reduce right padding so the button's right edge
-    // lines up with the content below
-    padding: '16px 8px 16px 20px',
+    // Fixed square tap target and centered icon so hover/ripple is centered
+    width: 64,
+    height: 64,
+    padding: 0,
+    marginLeft: 20,
+    marginRight: 8,
     "& .MuiSvgIcon-root": {
       fontSize: 40,
     },
@@ -93,14 +101,22 @@ export const MobileMenuButton = styled(IconButton)(({ theme }) => ({
 
   // iPad/medium resolution - larger size
   [theme.breakpoints.between("sm", "md")]: {
-    padding: '20px 8px 20px 24px',
+    width: 96,
+    height: 96,
+    padding: 0,
+    marginLeft: 24,
+    marginRight: 8,
     "& .MuiSvgIcon-root": {
       fontSize: 56,
     },
   },
 
   [theme.breakpoints.down("sm")]: {
-    padding: '12px 8px 12px 16px',
+    width: 72,
+    height: 72,
+    padding: 0,
+    marginLeft: 16,
+    marginRight: 8,
     "& .MuiSvgIcon-root": {
       fontSize: 48,
     },
