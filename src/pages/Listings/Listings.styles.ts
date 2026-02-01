@@ -40,9 +40,18 @@ export const ListView = styled("div")({
   margin: "auto",
 })
 
-export const Tiles = styled("div")({
-  padding: "16px 30px 30px 30px",
-})
+export const Tiles = styled("div")(({ theme }) => ({
+  // Reduce bottom padding so content doesn't leave excess space on small/medium screens
+  padding: "12px 30px 20px 30px",
+
+  [theme.breakpoints.down("md")]: {
+    padding: "8px 20px 12px 20px",
+  },
+
+  [theme.breakpoints.down("sm")]: {
+    padding: "6px 16px 8px 16px",
+  },
+}));
 
 export const Sidebar = styled("div")<{open: boolean}>(({theme, open}) => ({
   flexBasis: 400,

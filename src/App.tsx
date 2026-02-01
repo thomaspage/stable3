@@ -18,6 +18,7 @@ import {
 } from "@apollo/client";
 import { setContext } from "@apollo/client/link/context";
 import Listing from "./pages/Listing";
+import NotFound from "./pages/NotFound/NotFound";
 import mapboxgl from "mapbox-gl";
 import { useState } from "react";
 import { EXTERNAL_URLS } from "./constants";
@@ -116,8 +117,8 @@ function App() {
               <Route index element={<Navigate to="/listings" replace />} />
               <Route path="listings" element={<Listings setMode={setMode} />} />
               <Route path="listings/:id" element={<Listing setMode={setMode} />} />
-              {/* Catch-all route redirects to listings */}
-              <Route path="*" element={<Navigate to="/listings" replace />} />
+              {/* 404 page for unmatched routes */}
+              <Route path="*" element={<NotFound setMode={setMode} />} />
             </Route>
           </Routes>
         </Router>

@@ -36,6 +36,7 @@ import {
   StyledImageCarousel,
   StyledImageList,
   TitleContainer,
+  TitleText,
   TitleWithMap,
 } from "./Listing.styles";
 import Header from "components/Header";
@@ -183,14 +184,15 @@ const Listing = ({ setMode }: { setMode: (mode: PaletteMode) => void }) => {
 
   return (
     <ListingContainer>
-      <Header setMode={setMode} />
+      <Header setMode={setMode} alignWithContainer />
 
       <Button
         style={{ position: "sticky", top: 0, zIndex: 2 }}
         onClick={() => navigate("/listings")}
-        startIcon={<NavigateBefore />}
+        startIcon={<NavigateBefore sx={{ fontSize: 28 }} />}
+        sx={{ fontSize: '1rem', textTransform: 'none' }}
       >
-        back
+        Back to Listings
       </Button>
 
       <StyledImageList
@@ -236,9 +238,7 @@ const Listing = ({ setMode }: { setMode: (mode: PaletteMode) => void }) => {
 
       <TitleWithMap>
         <TitleContainer>
-          <Typography fontWeight={700} variant="h4">
-            {data.listing.title}
-          </Typography>
+          <TitleText>{data.listing.title}</TitleText>
           <HighlightsContainer>
             {data.listing.address && (
               <HightlightText>

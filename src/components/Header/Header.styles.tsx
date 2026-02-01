@@ -4,18 +4,25 @@ import { styled } from "@mui/material/styles";
 import { Button, IconButton } from "@mui/material";
 
 
-export const HeaderContainer = styled("div")(({ theme }) => ({
-  display: "flex",
-  flexDirection: "row",
-  justifyContent: "space-between",
-  alignItems: "center",
-  maxWidth: "100%",
-  overflow: "hidden",
-  padding: "18px 30px",
-  [theme.breakpoints.down("sm")]: {
-    padding: "14px 30px",
-  },
-}));
+export const HeaderContainer = styled("div")<{ alignWithContainer?: boolean }>(
+  ({ theme, alignWithContainer }) => ({
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    maxWidth: "100%",
+    overflow: "hidden",
+    // When used on a listing/unit page we want the header content to align with the page content edges
+    padding: alignWithContainer ? "12px 0" : "18px 30px",
+
+    [theme.breakpoints.down("md")]: {
+      padding: alignWithContainer ? "8px 0" : "10px 20px",
+    },
+    [theme.breakpoints.down("sm")]: {
+      padding: alignWithContainer ? "6px 0" : "8px 16px",
+    },
+  })
+);
 
 export const HeaderOptions = styled("div")(({ theme }) => ({
   display: "flex",
@@ -36,12 +43,13 @@ export const Logo = styled("img")(({ theme }) => ({
   margin: 0,
   flexShrink: 0,
 
+  // Make the logo noticeably smaller on medium and small screens
   [theme.breakpoints.down("md")]: {
-    height: 120,
+    height: 96,
   },
 
   [theme.breakpoints.down("sm")]: {
-    height: 110,
+    height: 64,
   },
 }));
 

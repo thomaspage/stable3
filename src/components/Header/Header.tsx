@@ -36,6 +36,7 @@ const Header = ({
   handleViewChange,
   setIsSidebarOpen,
   isSidebarOpen,
+  alignWithContainer,
 }: {
   setMode?: (mode: PaletteMode) => void;
   view?: "map" | "list";
@@ -45,13 +46,14 @@ const Header = ({
   ) => void;
   setIsSidebarOpen?: (open: boolean) => void;
   isSidebarOpen?: boolean;
+  alignWithContainer?: boolean;
 }) => {
   const theme = useTheme();
   const logo = theme.palette.mode === "dark" ? logoDark : logoLight;
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <HeaderContainer>
+    <HeaderContainer alignWithContainer={alignWithContainer}>
       <Logo src={logo} />
       
       {/* Desktop Options */}

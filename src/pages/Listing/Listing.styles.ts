@@ -105,7 +105,7 @@ export const HightlightText = styled(Typography)(({ theme }) => ({
   display: "flex",
   flexDirection: "row",
   // justifyContent: "space-between",
-  gap: 20,
+  gap: 12,
   alignItems: "center",
   marginBottom: 5,
 }));
@@ -121,6 +121,29 @@ export const TitleContainer = styled('div')(({ theme }) => ({
   flexBasis: "33%",
   flexGrow: 1,
   minWidth: 300,
+  // Center title horizontally within the container
+  textAlign: 'center',
+}));
+
+// Title text tuned to fit on a single line with truncation
+export const TitleText = styled(Typography)(({ theme }) => ({
+  fontWeight: 700,
+  fontSize: '1.55rem',
+  marginBottom: 0,
+  whiteSpace: 'nowrap',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  minWidth: 0,
+  textAlign: 'center',
+  paddingTop: 0,
+  [theme.breakpoints.down('md')]: {
+    fontSize: '1.50rem',
+  },
+  [theme.breakpoints.down('sm')]: {
+    fontSize: '1.3rem',
+    // Add a few pixels of extra space on mobile so the title isn't jammed to the top
+    paddingTop: 6,
+  },
 }));
 
 export const MapContainer = styled('div')(({ theme }) => ({
