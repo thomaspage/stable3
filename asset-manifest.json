@@ -1,9 +1,10 @@
 {
   "files": {
     "main.css": "/static/css/main.51518574.css",
-    "main.js": "/static/js/main.3a9baa90.js",
+    "main.js": "/static/js/main.0202a91f.js",
     "static/media/PPHatton-Bold.woff": "/static/media/PPHatton-Bold.84d28a71dd200536160c.woff",
     "static/media/PPHatton-Medium.woff": "/static/media/PPHatton-Medium.4e69b7e676ef0b973548.woff",
+    "static/media/logoLight.png": "/static/media/logoLight.792dddabff5862d10f5b.png",
     "static/media/PPHatton-BoldItalic.woff": "/static/media/PPHatton-BoldItalic.bb274c3200b38521e211.woff",
     "static/media/PPHatton-MediumItalic.woff": "/static/media/PPHatton-MediumItalic.d9bb2a984d1495f428d7.woff",
     "static/media/logoDark.png": "/static/media/logoDark.8d4c0e72a53a3a01a56f.png",
@@ -12,13 +13,12 @@
     "static/media/cooperl.ttf": "/static/media/cooperl.bc04a48a28c648b3a126.ttf",
     "static/media/cooperm.ttf": "/static/media/cooperm.0e996d293279ab5c2b3a.ttf",
     "static/media/ballantines.woff": "/static/media/ballantines.01bc5e8f03195996622c.woff",
-    "static/media/logoLight.png": "/static/media/logoLight.8ce333fd04ea3a4f6323.png",
     "index.html": "/index.html",
     "main.51518574.css.map": "/static/css/main.51518574.css.map",
-    "main.3a9baa90.js.map": "/static/js/main.3a9baa90.js.map"
+    "main.0202a91f.js.map": "/static/js/main.0202a91f.js.map"
   },
   "entrypoints": [
     "static/css/main.51518574.css",
-    "static/js/main.3a9baa90.js"
+    "static/js/main.0202a91f.js"
   ]
 }
