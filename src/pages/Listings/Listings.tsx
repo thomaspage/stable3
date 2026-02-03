@@ -136,12 +136,12 @@ const Listings = ({ setMode }: { setMode: (mode: PaletteMode) => void }) => {
   }, [view]);
 
   // Transform listings data into map features format
-  const features = useMemo(
-    () =>
-      data?.listingCollection.items
-        .filter((listing: any) => !listing.rented)
-        .map((listing: any) => ({
-          id: listing.sys.id,
+  const features = useMemo(() => {
+  if (loading || !data?.listingCollection?.items?.length) return []; // Safe empty during transitions
+  return data.listingCollection.items
+    .filter((listing: any) => !listing.rented)
+    .map((listing: any) => ({
+      id: listing.sys.id,
           title: listing.title,
           location: listing.location,
           images: listing.imagesCollection.items.filter((x: any) => x),
@@ -151,9 +151,13 @@ const Listings = ({ setMode }: { setMode: (mode: PaletteMode) => void }) => {
           squareFootage: listing.squareFootage,
           address: listing.city,
           availableDate: listing.availableDate,
-        })),
-    [data]
-  );
+         }));
+}, [data, loading]);
+
+const filtersKey = useMemo(() => 
+  JSON.stringify(filters), 
+  [filters]
+);
 
   /**
    * Handler for when a map popup/marker is clicked
@@ -190,10 +194,53 @@ const Listings = ({ setMode }: { setMode: (mode: PaletteMode) => void }) => {
         <View $sidebarOpen={isSidebarOpen}>
           <ViewInner>
             {view === "map" && (
-              <MapContainer>
-                <Map features={features} onPopupClick={handlePopupClick} />
-              </MapContainer>
-            )}
+  <MapContainer>
+    {loading ? (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '400px', padding: 40 }}>
+        <div className="loader" />
+      </div>
+    ) : !features?.length ? (
+      <Tiles>
+        <Grid container>
+          <Grid item xs={12}>
+            <NotFoundContainer>
+              <NotFoundCard>
+                <NotFoundTitle variant="h4">Sorry :( <p>No units match your criterias.</p></NotFoundTitle>
+                <NotFoundBody>
+                  Try adjusting your filters or reset them to see all listings again.
+                  <p>You may contact STABL3 to ask about unlisted options.</p>
+                </NotFoundBody>
+                <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    size="large"
+                    onClick={() => {
+                      setFilters({});
+                      setIsSidebarOpen(false);
+                    }}
+                  >
+                    Reset Filters
+                  </Button>
+                  <Button 
+                    startIcon={<Help />} 
+                    variant="outlined" 
+                    size="large"
+                    href={EXTERNAL_URLS.EMAIL}
+                  >
+                    Contact Us
+                  </Button>
+                </div>
+              </NotFoundCard>
+            </NotFoundContainer>
+          </Grid>
+        </Grid>
+      </Tiles>
+    ) : (
+      <Map features={features} onPopupClick={handlePopupClick} />
+    )}
+  </MapContainer>
+)}
 
             {view === "list" && (
               // While the listing data is loading, avoid showing the NotFound UI to prevent a flash
@@ -231,7 +278,7 @@ const Listings = ({ setMode }: { setMode: (mode: PaletteMode) => void }) => {
                                   setIsSidebarOpen(false);
                                 }}
                               >
-                                Reset filters
+                                Reset Filters
                               </Button>
 
                               <Button 
@@ -240,7 +287,7 @@ const Listings = ({ setMode }: { setMode: (mode: PaletteMode) => void }) => {
                                 size="large"
                                 href={EXTERNAL_URLS.EMAIL}
                               >
-                                stabl3.rental@gmail.com
+                                Contact Us
                               </Button>
                             </div>
                             

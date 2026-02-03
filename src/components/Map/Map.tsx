@@ -167,12 +167,12 @@ const Map = ({ features, onPopupClick, allowMarkerPopups = true }: MapProps) => 
         const popupObj = {
           id: feature.id,
           content: (
-            <Paper elevation={2} sx={{ p: 1.5, maxWidth: { xs: 280, sm: 280, md: 420 }, borderRadius: '12px' }}>
+            <Paper elevation={2} sx={{ p: 1.5, maxWidth: { xs: 275, sm: 320, md: 420 }, borderRadius: '12px' }}>
               <Box sx={{ position: 'relative' }}>
                 {/* top-left badge with availability */}
                 {formattedAvailable && (
                   <Box sx={{ position: 'absolute', top: 8, left: 8, zIndex: 2, bgcolor: 'background.paper', opacity: 0.75, px: 1, py: 0.5, borderRadius: 1, boxShadow: 1 }}>
-                    <Typography variant='caption' sx={{ display: 'block', color: 'warning.main', fontWeight: 700, fontSize: '0.94rem' }}>
+                    <Typography variant='caption' sx={{ display: 'block', color: 'warning.main', fontWeight: 700, fontSize: '0.8rem' }}>
                       {formattedAvailable}
                     </Typography>
                   </Box>
@@ -181,7 +181,7 @@ const Map = ({ features, onPopupClick, allowMarkerPopups = true }: MapProps) => 
                 {/* top-right badge with price (same styling as availability) */}
                 {feature.price && (
                   <Box sx={{ position: 'absolute', top: 8, right: 8, zIndex: 2, bgcolor: 'background.paper', opacity: 0.75, px: 1, py: 0.5, borderRadius: 1, boxShadow: 1 }}>
-                    <Typography variant='caption' sx={{ display: 'block', color: 'warning.main', fontWeight: 700, fontSize: '0.94rem' }}>
+                    <Typography variant='caption' sx={{ display: 'block', color: 'warning.main', fontWeight: 700, fontSize: '0.8rem' }}>
                       {formatCurrency({ amount: feature.price, language })}
                     </Typography>
                   </Box>
@@ -200,11 +200,11 @@ const Map = ({ features, onPopupClick, allowMarkerPopups = true }: MapProps) => 
               </Box>
 
               <Box sx={{ mt: 1 }}>
-                <Typography variant="h6" sx={{ fontWeight: 700, fontSize: '1.56rem', textAlign: 'center' }}>
+                <Typography variant="h6" sx={{ fontWeight: 700, fontSize: '1.3rem', textAlign: 'center' }}>
                   {feature.title}
                 </Typography>
                 {feature.description && (
-                  <Typography variant="body2" sx={{ mt: 0.5, textAlign: 'center', fontSize: '0.94rem' }}>
+                  <Typography variant="body2" sx={{ mt: 0.5, textAlign: 'center', fontSize: '0.8rem' }}>
                     {feature.description}
                   </Typography>
                 )}
