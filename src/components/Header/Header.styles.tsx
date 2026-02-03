@@ -1,7 +1,6 @@
-import { NavLink } from "react-router-dom";
 import { styled } from "@mui/material/styles";
 // import { styled as styled2 } from "styled-components";
-import { Button, IconButton } from "@mui/material";
+import { IconButton } from "@mui/material";
 
 
 export const HeaderContainer = styled("div")<{ alignWithContainer?: boolean }>(

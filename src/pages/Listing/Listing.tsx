@@ -130,7 +130,7 @@ const Listing = ({ setMode }: { setMode: (mode: PaletteMode) => void }) => {
 
   const [startIndex, setStartIndex] = useState<number | null>(null);
 
-  const { data, loading, error } = useQuery(LISTING_QUERY, {
+  const { data, loading } = useQuery(LISTING_QUERY, {
     variables: {
       id,
       locale: language,

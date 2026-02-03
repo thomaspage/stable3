@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { ApplyButtonContainer } from "./ApplyButton.styles";
 import { Button } from "@mui/material";
-import { EXTERNAL_URLS } from "../../constants";
+
 
 /**
  * Apply button component that links to the Google Form application

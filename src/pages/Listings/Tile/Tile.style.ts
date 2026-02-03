@@ -1,4 +1,4 @@
-import { Paper, Typography } from "@mui/material";
+import { Typography } from "@mui/material";
 import styled from "styled-components";
 
 export const TileContainer = styled('div')<{ $active: boolean}>(

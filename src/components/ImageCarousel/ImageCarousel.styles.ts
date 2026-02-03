@@ -1,11 +1,9 @@
-import { NavLink } from "react-router-dom";
 import { styled } from "@mui/material/styles";
 // import { styled as styled2 } from "styled-components";
-import { Button, IconButton, Modal } from "@mui/material";
+import { IconButton, Modal } from "@mui/material";
 import { Swiper, SwiperSlide } from 'swiper/react';
 
-export const ImageCarouselContainer = styled("div")(
-  ({  }) => ({
+export const ImageCarouselContainer = styled("div")({
     overflow: "hidden",
     width: "100%",
     userSelect: "none",
@@ -20,14 +18,13 @@ export const ImageCarouselContainer = styled("div")(
         display: "unset",
       },
     },
-  })
-);
+  });
 
-export const Slides = styled(Swiper)(({}) => ({
+export const Slides = styled(Swiper)({
   display: "flex",
 
   "--swiper-navigation-color": "#333",
-}));
+});
 
 export const Slide = styled(SwiperSlide)<{ $clickable: boolean }>(({ $clickable }) => ({
   flex: "0 0 100%",

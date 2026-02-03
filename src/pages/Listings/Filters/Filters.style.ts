@@ -1,7 +1,7 @@
 import { ToggleButton, ToggleButtonGroup, Typography } from "@mui/material";
 import styled from "styled-components";
 
-export const FiltersContainer = styled.div(({  }) => ({
+export const FiltersContainer = styled.div(() => ({
   // backgroundColor: active ? "red" : "none",
 }));
 

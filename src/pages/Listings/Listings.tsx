@@ -1,7 +1,6 @@
 import {
   Grid,
   PaletteMode,
-  useTheme,
   Button,
 } from "@mui/material";
 import {
@@ -19,7 +18,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { gql, useQuery } from "@apollo/client";
 import Map from "../../components/Map";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
 import Tile from "./Tile";
 import { Feature } from "../../components/Map/Map.types";
 import Filters from "./Filters";
@@ -118,7 +117,7 @@ const Listings = ({ setMode }: { setMode: (mode: PaletteMode) => void }) => {
   }, [filters]);
 
   // Fetch listings from Contentful with current filters
-  const { data } = useQuery(LISTINGS_QUERY, {
+  const { data, loading } = useQuery(LISTINGS_QUERY, {
     variables: {
       locale: language,
       priceMin: filters.priceMin,
@@ -160,9 +159,9 @@ const Listings = ({ setMode }: { setMode: (mode: PaletteMode) => void }) => {
    * Handler for when a map popup/marker is clicked
    * Highlights the corresponding listing in the list view
    */
-  const handlePopupClick = (feature: Feature) => {
+  const handlePopupClick = useCallback((feature: Feature) => {
     setActiveListingId(feature.id);
-  };
+  }, [setActiveListingId]);
 
   /**
    * Handler for toggling between map and list views
@@ -197,82 +196,95 @@ const Listings = ({ setMode }: { setMode: (mode: PaletteMode) => void }) => {
             )}
 
             {view === "list" && (
-              // If there are no listings returned for the current filters, show the NotFound-style card
-              !(features?.length) ? (
+              // While the listing data is loading, avoid showing the NotFound UI to prevent a flash
+              loading ? (
                 <Tiles>
                   <Grid container>
                     <Grid item xs={12}>
-                      <NotFoundContainer>
-                        <NotFoundCard>
-                          <NotFoundTitle variant="h4">Sorry :( <p>No units match your criterias.</p></NotFoundTitle>
-                          <NotFoundBody>
-                            Try adjusting your filters or reset them to see all listings again.
-                            <p>You may contact STABL3 to ask about unlisted options.</p>
-                          </NotFoundBody>
-
-                          <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-                            <Button
-                              variant="contained"
-                              color="primary"
-                              size="large"
-                              onClick={() => {
-                                setFilters({});
-                                setIsSidebarOpen(false);
-                              }}
-                            >
-                              Reset filters
-                            </Button>
-
-                            <Button 
-                              startIcon={<Help />} 
-                              variant="outlined" 
-                              size="large"
-                              href={EXTERNAL_URLS.EMAIL}
-                            >
-                              stabl3.rental@gmail.com
-                            </Button>
-                          </div>
-                          
-                        </NotFoundCard>
-                      </NotFoundContainer>
+                      <div style={{ display: 'flex', justifyContent: 'center', padding: 40 }}>
+                        <div className="loader" />
+                      </div>
                     </Grid>
                   </Grid>
                 </Tiles>
               ) : (
-                <Tiles>
-                  <Grid container spacing={3}>
-                    {data?.listingCollection.items
-                      .map((listing: any) => {
-                        return (
-                          <Grid
-                            key={listing.sys.id}
-                            item
-                            xs={12}
-                            md={isSidebarOpen ? 6 : 4}
-                            xl={isSidebarOpen ? 4 : 3}
-                            onMouseOver={() => setActiveListingId(null)}
-                          >
-                            <Tile
-                              id={listing.sys.id}
-                              availableDate={listing.availableDate}
-                              title={listing.title}
-                              description={listing.shortKeyDescription}
-                              bathrooms={listing.bathrooms}
-                              bedrooms={listing.bedrooms}
-                              squareFootage={listing.squareFootage}
-                              price={listing.price}
-                              images={listing.imagesCollection.items.filter(
-                                (x: any) => x
-                              )}
-                              active={activeListingId === listing.sys.id}
-                              rented={listing.rented}
-                            />
-                          </Grid>
-                        );
-                      })
-                      .reverse()}
-                  </Grid>
-                </Tiles>
+                // If there are no listings returned for the current filters, show the NotFound-style card
+                !(features?.length) ? (
+                  <Tiles>
+                    <Grid container>
+                      <Grid item xs={12}>
+                        <NotFoundContainer>
+                          <NotFoundCard>
+                            <NotFoundTitle variant="h4">Sorry :( <p>No units match your criterias.</p></NotFoundTitle>
+                            <NotFoundBody>
+                              Try adjusting your filters or reset them to see all listings again.
+                              <p>You may contact STABL3 to ask about unlisted options.</p>
+                            </NotFoundBody>
+
+                            <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+                              <Button
+                                variant="contained"
+                                color="primary"
+                                size="large"
+                                onClick={() => {
+                                  setFilters({});
+                                  setIsSidebarOpen(false);
+                                }}
+                              >
+                                Reset filters
+                              </Button>
+
+                              <Button 
+                                startIcon={<Help />} 
+                                variant="outlined" 
+                                size="large"
+                                href={EXTERNAL_URLS.EMAIL}
+                              >
+                                stabl3.rental@gmail.com
+                              </Button>
+                            </div>
+                            
+                          </NotFoundCard>
+                        </NotFoundContainer>
+                      </Grid>
+                    </Grid>
+                  </Tiles>
+                ) : (
+                  <Tiles>
+                    <Grid container spacing={3}>
+                      {data?.listingCollection.items
+                        .map((listing: any) => {
+                          return (
+                            <Grid
+                              key={listing.sys.id}
+                              item
+                              xs={12}
+                              md={isSidebarOpen ? 6 : 4}
+                              xl={isSidebarOpen ? 4 : 3}
+                              onMouseOver={() => setActiveListingId(null)}
+                            >
+                              <Tile
+                                id={listing.sys.id}
+                                availableDate={listing.availableDate}
+                                title={listing.title}
+                                description={listing.shortKeyDescription}
+                                bathrooms={listing.bathrooms}
+                                bedrooms={listing.bedrooms}
+                                squareFootage={listing.squareFootage}
+                                price={listing.price}
+                                images={listing.imagesCollection.items.filter(
+                                  (x: any) => x
+                                )}
+                                active={activeListingId === listing.sys.id}
+                                rented={listing.rented}
+                              />
+                            </Grid>
+                          );
+                        })
+                        .reverse()}
+                    </Grid>
+                  </Tiles>
+                )
               )
             )}
           </ViewInner>

@@ -1,4 +1,4 @@
-import { IconButton, Typography, styled } from "@mui/material";
+import { IconButton, styled } from "@mui/material";
 import Hamburger from "../../components/Hamburger";
 
 export const ListingsContainer = styled("div")({

@@ -1,4 +1,4 @@
-import { Container, Paper, Typography } from "@mui/material";
+import { Paper, Typography } from "@mui/material";
 import styled from "styled-components";
 
 export const LayoutContainer = styled(Paper).attrs({ elevation: 0, square: true })(

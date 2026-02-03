@@ -61,13 +61,7 @@ const Filters = ({ filters, setFilters }: FiltersProps) => {
   /**
    * Toggle amenity filter selection (currently unused but kept for future use)
    */
-  const handleAmenitiesChange = (newAmenity: string) => {
-    const newAmenities = new Set(amenities);
-    amenities.has(newAmenity)
-      ? newAmenities.delete(newAmenity)
-      : newAmenities.add(newAmenity);
-    setAmenities(newAmenities);
-  };
+
 
   /**
    * Handle price range slider change

@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import {
   BlurredImage,
   Image,
@@ -62,7 +62,7 @@ const ImageCarousel = ({
             <PreviewImage
               key={img.sys?.id || idx}
               src={`${img.url}?w=200`}
-              onClick={() => swiperInstance?.slideTo(idx)}
+              onClick={(e) => { e.stopPropagation(); swiperInstance?.slideTo(idx); }}
             />
           ))}
         </PreviewImages>

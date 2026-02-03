@@ -8,7 +8,7 @@ import {
 import { ThemeProvider } from "styled-components";
 import Layout from "./components/Layout";
 import Listings from "./pages/Listings";
-import Home from "./pages/Home";
+
 import { useLanguageSwitcher } from "./locale";
 import {
   ApolloClient,

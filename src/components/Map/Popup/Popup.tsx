@@ -14,7 +14,7 @@ export const Popup = ({ children, lngLat, map }: PopupProps) => {
     if (!popupRef.current) return;
 
     // Create and configure Mapbox popup
-    const popup = new mapboxgl.Popup({})
+    const popup = new mapboxgl.Popup({ maxWidth: '420px' })
       .setLngLat(lngLat)
       .setOffset([0, -15]) // Offset popup above marker
       .setDOMContent(popupRef.current)
