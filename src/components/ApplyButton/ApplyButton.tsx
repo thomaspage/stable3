@@ -17,9 +17,10 @@ const ApplyButton = () => {
           minHeight: 48,
           padding: "10px 24px",
           fontSize: "1rem",
+          textTransform: 'uppercase'
         }}
       >
-        {t("APPLY") as string}
+        {(t("APPLY") as string).toUpperCase()}
         </Button>
     </ApplyButtonContainer>
   );

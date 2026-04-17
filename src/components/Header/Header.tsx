@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   Button,
   IconButton,
@@ -39,6 +40,7 @@ const Header = ({
   isSidebarOpen,
   alignWithContainer,
   filtersActive,
+  onBookVisit,
 }: {
   setMode?: (mode: PaletteMode) => void;
   view?: "map" | "list";
@@ -50,10 +52,18 @@ const Header = ({
   isSidebarOpen?: boolean;
   alignWithContainer?: boolean;
   filtersActive?: boolean;
+  onBookVisit?: () => void;
 }) => {
   const theme = useTheme();
   const logo = theme.palette.mode === "dark" ? logoDark : logoLight;
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  // If pathname is /listings/:id or /listings/:id/... extract id
+  const match = location.pathname.match(/^\/listings\/(?:([^\/]+))(?:\/|$)/);
+  const listingId = match ? match[1] : null;
+  const isBookingPage = location.pathname.endsWith("/book");
 
   return (
     <HeaderContainer alignWithContainer={alignWithContainer}>
@@ -63,6 +73,21 @@ const Header = ({
       
       {/* Desktop Options */}
       <HeaderOptions>
+        {!isBookingPage && (
+          <Button
+            variant="outlined"
+            size="large"
+            color="inherit"
+            onClick={() => {
+              if (listingId) navigate(`/listings/${listingId}/book`);
+              else if (onBookVisit) onBookVisit();
+            }}
+            sx={{ minHeight: 48, padding: "10px 24px", fontSize: "1rem", textTransform: 'uppercase' }}
+          >
+            BOOK A VISIT
+          </Button>
+        )}
+
         <ApplyButton />
 
         {setMode && <ThemeSelector setMode={setMode} />}
@@ -115,6 +140,22 @@ const Header = ({
           >
             <CloseIcon />
           </IconButton>
+
+          {!isBookingPage && (
+            <Button
+              variant="outlined"
+              size="large"
+              color="inherit"
+              onClick={() => {
+                setMobileMenuOpen(false);
+                if (listingId) navigate(`/listings/${listingId}/book`);
+                else if (onBookVisit) onBookVisit();
+              }}
+              sx={{ minHeight: 48, padding: "10px 24px", fontSize: "1rem", marginBottom: 1, textTransform: 'uppercase' }}
+            >
+              BOOK A VISIT
+            </Button>
+          )}
 
           <ApplyButton />
 

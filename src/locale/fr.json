@@ -1,19 +1,21 @@
 {
     "translation": {
         "common": {
+            "availableNow": "Disponible maintenant",
+            "availableDate": "Disponible le {{date}}",
+            "apply": "Postuler",
             "bed": "ch",
             "bedroom": "chambre",
             "bedrooms": "chambres",
             "bath": "sdb",
             "bathroom": "salle de bain",
             "bathrooms": "salles de bain",
+            "description": "Description",
             "details": "Détails de Location",
-            "sqft": "pi²",
             "month": "mois",
-            "description": "Déscription",
-            "monthlyRent"   : "loyer mensuel",
-            "availableDate": "Disponible le {{date}}",
-            "rented": "Loué"
+            "monthlyRent": "loyer mensuel",
+            "rented": "Loué",
+            "sqft": "pi²"
         }
     }
 }

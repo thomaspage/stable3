@@ -85,6 +85,17 @@ const Map = ({ features, onPopupClick, allowMarkerPopups = true }: MapProps) => 
     map.current.setStyle(`mapbox://styles/mapbox/${theme.palette.mode}-v11`);
   }, [theme.palette.mode]);
 
+  // Keep Mapbox's canvas in sync when the parent container resizes
+  // (e.g. when a sibling flex item grows after data loads).
+  useEffect(() => {
+    if (!mapContainer.current) return;
+    const observer = new ResizeObserver(() => {
+      map.current?.resize();
+    });
+    observer.observe(mapContainer.current);
+    return () => observer.disconnect();
+  }, []);
+
   // Update markers when features change
   useEffect(() => {
     if (!map.current) return;

@@ -10,8 +10,11 @@ import {
   SpaceDashboardOutlined,
 } from "@mui/icons-material";
 import {
+  Box,
   Button,
+  Divider,
   ImageListItem,
+  Paper,
   Typography,
   Link as StyledLink,
   PaletteMode,
@@ -28,8 +31,6 @@ import {
   ContactContainer,
   DescriptionContainer,
   DescriptionWrapper,
-  HighlightsContainer,
-  HightlightText,
   ImageCarouselModal,
   ListingContainer,
   MapContainer,
@@ -45,6 +46,268 @@ import { useMemo, useState, useEffect } from "react";
 import ImageCarousel from "components/ImageCarousel";
 import Map from "components/Map";
 import { EXTERNAL_URLS } from "../../constants";
+import { useGeocodedLocation, useReverseGeocodedAddress } from "../../geocode";
+
+// Short display labels for each Contentful amenity value.
+// Grouped to match the three UI sections in render order.
+const AMENITY_LABELS: Record<string, string> = {
+  // ── Inclusions / Exclusions ──
+  // Utilities
+  
+  // Air conditioning
+  "Air Conditionning Included (Central)":   "Central A/C Included",
+  "Air Conditionning Included (Wall Unit)": "Wall Unit A/C Included",
+  // Appliances
+  "Appliances Excluded":                    "No Appliances Included",
+  "Refrigerator Included":                  "Refrigerator Included",
+  "Stove Included":                         "Stove Included",
+  "Washer Included":                        "Washer Included",
+  "Dryer Included":                         "Dryer Included",
+  "Dishwasher Included":                    "Dishwasher Included",
+  "Dishwasher Excluded":                    "Dishwasher Excluded",
+  // Laundry
+  "Washer Dryer Connections":               "Washer/Dryer Hookups Available",
+  "Shared Laundry Room":                    "Shared Laundry Room",
+  // Parking
+  "Parking on Street Available":            "Street Parking Available",
+  "Indoor Parking Available":               "Indoor/Garage Parking",
+  // Furnishings
+  "Furnished Unit":                         "Fully Furnished",
+  "Partly Furnished":                       "Partly Furnished",
+
+  // ── Pet Policy ──
+  "Pets Not Accepted":                      "No Pets Accepted",
+  "Pets Accepted":                          "Pets Welcome",
+  "Cats Accepted":                          "Cats Welcome",
+  "Dogs Accepted":                          "Dogs Welcome",
+  "1 Dog Accepted":                         "1x Dog Welcome",
+  "1 Cat Accepted":                         "1x Cat Welcome",
+
+  // ── Additional Features ──
+  // Spotlight (always shown first)
+  "Clean Prior Tenants":                    "Clean Prior Tenants",
+  // Kitchen
+  "Full Size Pantry":                       "Full-size Pantry",
+  // Floor / unit configuration
+  "On Two Floors (In-Unit Staircase)":      "Two-Floor Unit (in-unit stairs)",
+  // Building quality
+  "New":                                    "New Building",
+  "Luxury":                                 "Luxury Building",
+  "Recent Renovations":                     "Recently Renovated",
+  // Unit features
+  "Balcony/Patio Included":                 "Balcony / Patio Included",
+  "Exterior Storage Available":             "Exterior Storage Included",
+  // Building amenities
+  "Alarm System Available":                 "Alarm System",
+  "Elevator Available":                     "Elevator",
+  "Lobby Available":                        "Entrance Lobby",
+  "Secured Entry Available":                "Secured Entry",
+  "Concierge On-site":                      "Concierge On-site",
+  // Proximity
+  "Close to Gym":                           "Near Gym",
+  "Close to Public Transit":                "Near Public Transit",
+  "Close to Daycare":                       "Near Daycare",
+
+  // ── Consolidated / synthetic markers (produced by consolidateAmenities) ──
+  "__hydroHeatingIncluded":                 "Hydro and Heating Included",
+  "__hydroHeatingExcluded":                 "Hydro and Heating Excluded",
+  // Main-appliance rollups are produced dynamically as "__mainAppliances:Fridge,Stove,..." — see getAmenityLabel
+};
+
+// Short display names for the 5 "main" appliances. Iteration order determines
+// the order they appear inside the dynamic rollup label.
+const MAIN_APPLIANCE_SHORT_NAMES: Record<string, string> = {
+  "Refrigerator Included": "Fridge",
+  "Stove Included":        "Stove",
+  "Washer Included":       "Washer",
+  "Dryer Included":        "Dryer",
+  "Dishwasher Included":   "Dishwasher",
+};
+
+const MAIN_APPLIANCES_PREFIX = "__mainAppliances:";
+
+// Merges related amenities into a single bullet when thresholds are met:
+//   - 2+ main appliances → "Nx Appliances Included (Fridge, Stove, ...)" (list is dynamic)
+//   - electricity + heating both included/excluded → "Hydro and Heating Included/Excluded"
+const consolidateAmenities = (list: string[]): string[] => {
+  const source = new Set(list);
+  const out = new Set<string>(list);
+
+  const mains = Object.keys(MAIN_APPLIANCE_SHORT_NAMES).filter(a => source.has(a));
+  if (mains.length >= 2) {
+    mains.forEach(a => out.delete(a));
+    const shortNames = mains.map(a => MAIN_APPLIANCE_SHORT_NAMES[a]).join(",");
+    out.add(`${MAIN_APPLIANCES_PREFIX}${shortNames}`);
+  }
+
+  if (source.has("Electricity Included") && source.has("Heating Included")) {
+    out.delete("Electricity Included");
+    out.delete("Heating Included");
+    out.add("__hydroHeatingIncluded");
+  }
+  if (source.has("Electricity Excluded") && source.has("Heating Excluded")) {
+    out.delete("Electricity Excluded");
+    out.delete("Heating Excluded");
+    out.add("__hydroHeatingExcluded");
+  }
+
+  return Array.from(out);
+};
+
+// Resolves an amenity to its display label. Handles both static label lookups
+// and the dynamic "__mainAppliances:Fridge,Stove,Washer" marker.
+const getAmenityLabel = (amenity: string): string => {
+  if (amenity.startsWith(MAIN_APPLIANCES_PREFIX)) {
+    const names = amenity.substring(MAIN_APPLIANCES_PREFIX.length).split(",");
+    return `${names.length}x Appliances Included (${names.join(", ")})`;
+  }
+  return AMENITY_LABELS[amenity] ?? amenity;
+};
+
+// Auto-catches any new Contentful amenity whose name contains one of these
+// words into Inclusions / Exclusions. `\b` word boundaries prevent accidental
+// substring matches (e.g. "Carpets" won't match "pet").
+const INCLUSION_KEYWORD_REGEX =
+  /\b(fridge|refrigerator|freezer|oven|range|stove|microwave|dishwasher|washer|dryer|laundry|electric|electricity|hydro|gas|utilities?|parking|garage|carport|heating|heat ?pump|air ?condition(?:n)?ing|a\/c|ac|wi-?fi|internet|ethernet|fiber|furnished)\b/i;
+
+const isInclusionAmenity = (amenity: string): boolean =>
+  INCLUSION_AMENITIES.has(amenity) ||
+  amenity.startsWith(MAIN_APPLIANCES_PREFIX) ||
+  INCLUSION_KEYWORD_REGEX.test(amenity);
+
+// Auto-sorts any new Contentful amenity containing a pet-related word into Pet Policy.
+const PET_KEYWORD_REGEX = /\b(pet|pets|dog|dogs|cat|cats|animal|animals)\b/i;
+const isPetAmenity = (amenity: string): boolean =>
+  PET_AMENITIES.has(amenity) || PET_KEYWORD_REGEX.test(amenity);
+
+// Display-order priority inside each section (lower = earlier).
+// Unknown amenities land at the end of their section.
+const INCLUSION_PRIORITY: Record<string, number> = {
+  // 1 — Hydro / Heating
+  "__hydroHeatingIncluded":                 10,
+  "__hydroHeatingExcluded":                 11,
+  "Electricity Included":                   12,
+  "Electricity Excluded":                   13,
+  "Heating Included":                       14,
+  "Heating Excluded":                       15,
+  // 2 — Appliances (dynamic rollup sits at start, see getInclusionPriority)
+  "Appliances Excluded":                    21,
+  "Refrigerator Included":                  22,
+  "Stove Included":                         23,
+  "Washer Included":                        24,
+  "Dryer Included":                         25,
+  "Dishwasher Included":                    26,
+  "Dishwasher Excluded":                    27,
+  // 3 — Laundry
+  "Washer Dryer Connections":               30,
+  "Shared Laundry Room":                    31,
+  // 4 — Parking
+  "One Parking Available":                  40,
+  "Two Parking Available":                  41,
+  "Parking on Street Available":            42,
+  "Indoor Parking Available":               43,
+  // 5 — A/C
+  "Air Conditionning Included (Central)":   50,
+  "Air Conditionning Included (Wall Unit)": 51,
+  // 6 — Internet
+  "Internet Included":                      60,
+  // 7 — Furnishings
+  "Furnished Unit":                         70,
+  "Partly Furnished":                       71,
+};
+
+const FEATURE_PRIORITY: Record<string, number> = {
+  // 0 — Spotlight (exceptional — always first)
+  "Clean Prior Tenants":                    0,
+  // 1 — Floor / unit configuration
+  "Lowest Floor":                           10,
+  "Ground Floor":                           11,
+  "2nd Floor":                              12,
+  "3rd Floor":                              13,
+  "Highest Floor":                          14,
+  "On Two Floors (In-Unit Staircase)":      15,
+  // 2 — Unit space (balcony, pantry, rooftop-like)
+  "Balcony/Patio Included":                 20,
+  "Full Size Pantry":                       21,
+  // 3 — Other unit-level features / quality
+  "Exterior Storage Available":             30,
+  "New":                                    31,
+  "Luxury":                                 32,
+  "Recent Renovations":                     33,
+  // 4 — Building features
+  "Alarm System Available":                 40,
+  "Elevator Available":                     41,
+  "Lobby Available":                        42,
+  "Secured Entry Available":                43,
+  "Concierge On-site":                      44,
+  // 5 — Proximity ("close to …") — always last
+  "Close to Gym":                           100,
+  "Close to Public Transit":                101,
+  "Close to Daycare":                       102,
+};
+
+const getInclusionPriority = (amenity: string): number => {
+  if (amenity.startsWith(MAIN_APPLIANCES_PREFIX)) return 20; // Rollup sits at start of appliances
+  const exact = INCLUSION_PRIORITY[amenity];
+  if (exact !== undefined) return exact;
+
+  // Keyword-based fallbacks so future Contentful amenities still land in the
+  // right sub-group. Each fallback is nudged to the end of its group (e.g. 19
+  // for Hydro/Heating) so explicit entries keep their specified order.
+  if (/\b(electric|electricity|hydro|gas|heating)\b/i.test(amenity)) return 19;
+  if (/\b(fridge|refrigerator|freezer|oven|range|stove|microwave|dishwasher|appliances?)\b/i.test(amenity)) return 29;
+  if (/\b(washer|dryer|laundry)\b/i.test(amenity)) return 39;
+  if (/\b(parking|garage|carport|ev ?charging)\b/i.test(amenity)) return 49;
+  if (/\b(a\/c|air ?condition(?:n)?ing|heat ?pump)\b/i.test(amenity)) return 59;
+  if (/\b(wi-?fi|internet|ethernet|fiber)\b/i.test(amenity)) return 69;
+  if (/\b(furnished|furniture)\b/i.test(amenity)) return 79;
+
+  return 999;
+};
+
+const getFeaturePriority = (amenity: string): number => {
+  const exact = FEATURE_PRIORITY[amenity];
+  if (exact !== undefined) return exact;
+
+  // Rooftop → just after Balcony/Patio (20) and Pantry (21)
+  if (/\brooftop\b/i.test(amenity)) return 22;
+  // Unknown proximity amenities (e.g. "Close to Park") → end of section
+  if (/\b(close to|near|nearby)\b/i.test(amenity)) return 150;
+
+  return 50; // Unknown middle-of-section feature
+};
+
+// Utilities, A/C, appliances, laundry, parking, furnishings — anything "in or out" of the unit
+const INCLUSION_AMENITIES = new Set([
+  // Utilities
+  "Electricity Excluded", "Electricity Included",
+  "Heating Excluded", "Heating Included",
+  "Internet Included",
+  // Air conditioning
+  "Air Conditionning Included (Central)", "Air Conditionning Included (Wall Unit)",
+  // Appliances
+  "Appliances Excluded",
+  "Refrigerator Included", "Stove Included",
+  "Washer Included", "Dryer Included", "Dishwasher Included", "Dishwasher Excluded",
+  // Laundry
+  "Washer Dryer Connections", "Shared Laundry Room",
+  // Parking
+  "One Parking Available", "Two Parking Available",
+  "Parking on Street Available", "Indoor Parking Available",
+  // Furnishings
+  "Furnished Unit", "Partly Furnished",
+  // Synthetic consolidated markers (main-appliance rollup is handled by prefix check in isInclusionAmenity)
+  "__hydroHeatingIncluded", "__hydroHeatingExcluded",
+]);
+
+// Anything animal-related
+const PET_AMENITIES = new Set([
+  "Pets Not Accepted", "Pets Accepted",
+  "Cats Accepted", "Dogs Accepted",
+  "1 Dog Accepted", "1 Cat Accepted",
+]);
+
+// Everything else falls into Additional Features (floor/config, building, proximity, etc.)
 
 const LISTING_QUERY = gql`
   query ($id: String!, $locale: String) {
@@ -56,7 +319,6 @@ const LISTING_QUERY = gql`
       title
       description
       amenities
-      address
       bathrooms
       bedrooms
       squareFootage
@@ -138,23 +400,35 @@ const Listing = ({ setMode }: { setMode: (mode: PaletteMode) => void }) => {
     errorPolicy: "all",
   });
 
+  // Falls back to geocoding `address` when Contentful's `location` field is empty.
+  const resolvedLocation = useGeocodedLocation(
+    data?.listing?.location,
+    data?.listing?.address,
+  );
+
+  // Reverse-geocodes the pin when no explicit text `address` was set in Contentful,
+  // so editors can fill just the Location field and the UI still shows a title.
+  const reverseResult = useReverseGeocodedAddress(resolvedLocation);
+  const displayAddress: string | null =
+    data?.listing?.address || reverseResult?.shortAddress || null;
+
   const features = useMemo(
     () =>
-      data?.listing?.location && [
+      resolvedLocation && data?.listing && [
         {
           id: data.listing.sys.id,
           title: data.listing.title,
-          location: data.listing.location,
+          location: resolvedLocation,
           images: data.listing.imagesCollection.items.filter((x: any) => x),
           price: data.listing.price,
           bedrooms: data.listing.bedrooms,
           bathrooms: data.listing.bathrooms,
           squareFootage: data.listing.squareFootage,
-          address: data.listing.address,
+          address: displayAddress ?? undefined,
           availableDate: data.listing.availableDate,
         },
       ],
-    [data]
+    [data, resolvedLocation, displayAddress]
   );
 
   // Redirect to listings if the listing doesn't exist or is rented
@@ -248,60 +522,105 @@ const Listing = ({ setMode }: { setMode: (mode: PaletteMode) => void }) => {
 
       <TitleWithMap>
         <TitleContainer>
-          <TitleText>{data.listing.title}</TitleText>
-          <HighlightsContainer>
-            {data.listing.address && (
-              <HightlightText>
-                <LocationOnOutlined />
-                <strong>
-                  {data.listing.location ? (
-                    <StyledLink
-                      target="_blank"
-                      href={`https://maps.google.com/?q=${data.listing.location.lat},${data.listing.location.lon}`}
-                    >
-                      {data.listing.address}
-                    </StyledLink>
-                  ) : (
-                    data.listing.address
-                  )}
-                </strong>
-              </HightlightText>
-            )}
-            {data.listing.price && (
-              <HightlightText>
-                <LocalAtm />
-                {price} / {t("common.month")}
-              </HightlightText>
-            )}
-            {!!data.listing.bedrooms && (
-              <HightlightText>
-                <BedOutlined /> {data.listing.bedrooms}{" "}
-                {data.listing.bedrooms > 1
-                  ? t("common.bedrooms")
-                  : t("common.bedroom")}
-              </HightlightText>
-            )}
-            {!!data.listing.bathrooms && (
-              <HightlightText>
-                <ShowerOutlined /> {data.listing.bathrooms}{" "}
-                {data.listing.bathrooms > 1
-                  ? t("common.bathrooms")
-                  : t("common.bathroom")}
-              </HightlightText>
-            )}
-            {data.listing.squareFootage && (
-              <HightlightText>
-                <SpaceDashboardOutlined />
-                {data.listing.squareFootage} {t("common.sqft")}
-              </HightlightText>
-            )}
-            {formattedDate && (
-              <HightlightText>
-                <EventAvailableOutlined />
-                {formattedDate}
-              </HightlightText>
-            )}
-          </HighlightsContainer>
+          <Paper
+            elevation={3}
+            sx={{
+              borderRadius: 3,
+              overflow: "hidden",
+              padding: "12px 16px 12px",
+              display: "flex",
+              flexDirection: "column",
+              gap: 0.5,
+              height: "100%",
+              justifyContent: "center",
+            }}
+          >
+            <TitleText>{data.listing.title}</TitleText>
+            <Divider sx={{ my: 0.25 }} />
+            <Box
+              sx={{
+                display: "grid",
+                // Fixed-width icon column so the gap (and text's left edge) stays
+                // identical across rows regardless of each icon's visual weight.
+                gridTemplateColumns: "24px auto",
+                columnGap: 1,
+                rowGap: 0.45,
+                alignItems: "center",
+                // Shrink grid to its content and center it in the card so
+                // icons form a column and text starts at the same X (like a tab stop).
+                width: "fit-content",
+                margin: "0 auto",
+                // Parent TitleContainer sets textAlign:center; override so the
+                // text column left-aligns and every row starts at the same X.
+                textAlign: "left",
+                // Center each icon within its 24px cell so small visual differences
+                // between icons don't shift the perceived gap.
+                // :nth-child (position-based) correctly targets every icon;
+                // :nth-of-type would break because the grid mixes <svg>, <a>, <p>.
+                "& > :nth-child(odd)": {
+                  justifySelf: "center",
+                },
+                // Pin text cells to the start of column 2 and force left alignment
+                // (overrides text-align:center inherited from TitleContainer).
+                "& > :nth-child(even)": {
+                  justifySelf: "start",
+                  textAlign: "left",
+                },
+              }}
+            >
+              {resolvedLocation && (
+                <>
+                  <LocationOnOutlined fontSize="small" />
+                  <StyledLink
+                    target="_blank"
+                    href={`https://maps.google.com/?q=${resolvedLocation.lat},${resolvedLocation.lon}`}
+                  >
+                    <Typography variant="body2" sx={{ fontSize: "17px" }}>View on map</Typography>
+                  </StyledLink>
+                </>
+              )}
+              {!!data.listing.bedrooms && (
+                <>
+                  <BedOutlined fontSize="small" />
+                  <Typography variant="body2" sx={{ fontSize: "17px" }}>
+                    {data.listing.bedrooms}{" "}
+                    {data.listing.bedrooms > 1 ? t("common.bedrooms") : t("common.bedroom")}
+                  </Typography>
+                </>
+              )}
+              {!!data.listing.bathrooms && (
+                <>
+                  <ShowerOutlined fontSize="small" />
+                  <Typography variant="body2" sx={{ fontSize: "17px" }}>
+                    {data.listing.bathrooms}{" "}
+                    {data.listing.bathrooms > 1 ? t("common.bathrooms") : t("common.bathroom")}
+                  </Typography>
+                </>
+              )}
+              {data.listing.squareFootage && (
+                <>
+                  <SpaceDashboardOutlined fontSize="small" />
+                  <Typography variant="body2" sx={{ fontSize: "17px" }}>
+                    {data.listing.squareFootage} {t("common.sqft")}
+                  </Typography>
+                </>
+              )}
+              {data.listing.price && (
+                <>
+                  <LocalAtm fontSize="small" />
+                  <Typography variant="body2" sx={{ fontSize: "17px" }}>
+                    {price} / {t("common.month")}
+                  </Typography>
+                </>
+              )}
+              {formattedDate && (
+                <>
+                  <EventAvailableOutlined fontSize="small" />
+                  <Typography variant="body2" sx={{ fontSize: "17px" }}>{formattedDate}</Typography>
+                </>
+              )}
+            </Box>
+          </Paper>
         </TitleContainer>
         <MapContainer>
           <Map features={features} allowMarkerPopups={false} />
@@ -324,32 +643,71 @@ const Listing = ({ setMode }: { setMode: (mode: PaletteMode) => void }) => {
           <ContactContainer>
             <Button
               variant="contained"
+              size="large"
+              color="primary"
+              disableElevation
+              onClick={() => navigate(`/listings/${id}/book`)}
+              sx={{ height: 48, padding: "10px 24px", fontSize: "1rem", textTransform: 'uppercase', boxSizing: "border-box", border: "1px solid transparent" }}
+            >
+              {"BOOK A VISIT"}
+            </Button>
+
+            <Button
+              variant="contained"
+              size="large"
+              disableElevation
               href={EXTERNAL_URLS.GOOGLE_FORM}
               target="_blank"
+              sx={{ textTransform: 'uppercase', height: 48, padding: "10px 24px", fontSize: "1rem", boxSizing: "border-box", border: "1px solid transparent" }}
             >
-              {t("common.apply")}
+              {String(t("common.apply")).toUpperCase()}
             </Button>
-            <Button 
-              startIcon={<Help />} 
-              variant="outlined" 
+
+            <Button
+              startIcon={<Help />}
+              variant="outlined"
+              size="large"
               href={EXTERNAL_URLS.EMAIL}
+              sx={{ height: 48, padding: "10px 24px", fontSize: "1rem", boxSizing: "border-box" }}
             >
-              stabl3.rental@gmail.com
+              {EXTERNAL_URLS.EMAIL_ADDRESS}
             </Button>
           </ContactContainer>
         </DescriptionWrapper>
 
-        {data.listing.amenities && (
-          <AmenitiesContainer>
-            <Typography variant="h5">{t("common.details")}</Typography>
-            <AmenitiesList>
-              {data.listing.amenities.map((amenity: Amenity) => {
-                const text = t(`amenities.${amenity}`);
-                return <Typography key={amenity}>- {text}</Typography>;
-              })}
-            </AmenitiesList>
-          </AmenitiesContainer>
-        )}
+        {data.listing.amenities && (() => {
+          const amenities = consolidateAmenities(data.listing.amenities as string[]) as Amenity[];
+          // Pets takes precedence so a pet-keyword amenity never double-displays.
+          const pets = amenities.filter(a => isPetAmenity(a));
+          const inclusions = amenities
+            .filter(a => isInclusionAmenity(a) && !isPetAmenity(a))
+            .sort((a, b) => getInclusionPriority(a) - getInclusionPriority(b));
+          const features = amenities
+            .filter(a => !isInclusionAmenity(a) && !isPetAmenity(a))
+            .sort((a, b) => getFeaturePriority(a) - getFeaturePriority(b));
+
+          const renderSection = (label: string, items: Amenity[]) =>
+            items.length > 0 && (
+              <div>
+                <Typography variant="h6" sx={{ mt: 1.5, mb: 0.5 }}>{label}</Typography>
+                <Divider sx={{ mb: 1 }} />
+                <AmenitiesList>
+                  {items.map(amenity => (
+                    <Typography key={amenity}>- {getAmenityLabel(amenity)}</Typography>
+                  ))}
+                </AmenitiesList>
+              </div>
+            );
+
+          return (
+            <AmenitiesContainer>
+              <Typography variant="h5">{t("common.details")}</Typography>
+              {renderSection("Inclusions / Exclusions", inclusions)}
+              {renderSection("Pet Policy", pets)}
+              {renderSection("Additional Features", features)}
+            </AmenitiesContainer>
+          );
+        })()}
       </BodyContainer>
     </ListingContainer>
   );

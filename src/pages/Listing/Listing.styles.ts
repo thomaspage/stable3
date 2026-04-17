@@ -2,59 +2,15 @@ import { Container, ImageList, Modal, Typography } from "@mui/material";
 import { styled } from "styled-components";
 import ImageCarousel from "../../components/ImageCarousel";
 
-export const ListingContainer = styled(Container)({
-  // display: "flex",
-  // flexDirection: "column",
-  // gap: 30,
-  // height: "100%",
-  // overflow: "auto",
-});
-
-export const MetroImg = styled("img").attrs({
-  src: `${process.env.PUBLIC_URL}/img/metro.png`,
-})({
-  height: 30,
-});
-
-export const WalkerImg = styled("img").attrs({
-  src: `${process.env.PUBLIC_URL}/img/walking.png`,
-})({
-  height: 15,
-});
-
-export const Hotel = styled("div")({});
-
-export const Hotels = styled("div")(({ theme }) => ({
-  display: "flex",
-  flexDirection: "row",
-  justifyContent: "space-between",
-  gap: 20,
-
-  [theme.breakpoints.down("md")]: {
-    flexDirection: "column",
-  },
-}));
-
-export const InlineFlex = styled("div")({
-  display: "flex",
-  flexDirection: "row",
-  gap: 5,
-  alignItems: "center",
-});
-
-export const HotelName = styled(Typography).attrs({ variant: "h3" })(
-  ({ theme }) => ({
-    textDecoration: "none",
-    color: "black",
-  })
-);
+export const ListingContainer = styled(Container)({});
 
 export const StyledImageCarousel = styled(ImageCarousel)(({ theme }) => ({
   maxWidth: 600,
-
 }));
 
 export const MobileImageCarousel = styled("div")(({ theme }) => ({
+  borderRadius: 12,
+  overflow: "hidden",
   [theme.breakpoints.up("sm")]: { display: "none" },
 }));
 
@@ -62,15 +18,13 @@ export const ImageCarouselModal = styled(Modal)(({ theme }) => ({
   [theme.breakpoints.down("sm")]: { display: "none" },
 }));
 
-
 export const StyledImageList = styled(ImageList)(({ theme }) => ({
+  borderRadius: 12,
+  overflow: "hidden",
   [theme.breakpoints.down("sm")]: { display: "none" },
-  // display: "none"
-
 }));
 
-
-export const BodyContainer = styled('div')({
+export const BodyContainer = styled("div")({
   padding: 10,
   display: "flex",
   gap: 50,
@@ -78,105 +32,89 @@ export const BodyContainer = styled('div')({
   marginBottom: 100,
 });
 
+export const DescriptionContainer = styled("div")({});
 
-export const DescriptionContainer = styled('div')({
-
-});
-
-export const AmenitiesContainer = styled('div')({
+export const AmenitiesContainer = styled("div")({
   flexBasis: "40%",
   flexGrow: 1,
   minWidth: 400,
 });
 
 // Responsive list for amenities: two columns on desktop, one column on small screens
-export const AmenitiesList = styled('div')(({ theme }) => ({
+export const AmenitiesList = styled("div")(({ theme }) => ({
   columnCount: 2,
   columnGap: 24,
-  [theme.breakpoints.down('sm')]: {
+  [theme.breakpoints.down("sm")]: {
     columnCount: 1,
   },
 }));
 
-export const AmenityText = styled(Typography)(({ theme }) => ({
+export const TitleWithMap = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "row",
-  // justifyContent: "space-between",
-  gap: 20,
-  alignItems: "center",
+  flexWrap: "nowrap",
+  alignItems: "stretch",
+  gap: 24,
+  marginBottom: 20,
+
+  // On narrower screens, stack the map below the spotlight so the title
+  // always has enough room to render in full.
+  [theme.breakpoints.down("md")]: {
+    flexDirection: "column",
+  },
 }));
 
-export const HighlightsContainer = styled('div')({
-  padding: 10,
+export const TitleContainer = styled("div")({
+  flex: "1 1 0",
+  minWidth: 0,
+  // Center title horizontally within the container
+  textAlign: "center",
 });
 
-export const HightlightText = styled(Typography)(({ theme }) => ({
-  display: "flex",
-  flexDirection: "row",
-  // justifyContent: "space-between",
-  gap: 12,
-  alignItems: "center",
-  marginBottom: 5,
-}));
-
-export const TitleWithMap = styled('div')(({ theme }) => ({
-  display: "flex",
-  flexDirection: "row",
-  flexWrap: "wrap",
-  marginBottom: 20,
-}));
-
-export const TitleContainer = styled('div')(({ theme }) => ({
-  flexBasis: "33%",
-  flexGrow: 1,
-  minWidth: 300,
-  // Center title horizontally within the container
-  textAlign: 'center',
-}));
-
-// Title text tuned to fit on a single line with truncation
+// Title text — allowed to wrap so long addresses stay fully readable in narrow layouts
 export const TitleText = styled(Typography)(({ theme }) => ({
   fontWeight: 700,
-  fontSize: '1.55rem',
+  fontSize: "1.35rem",
   marginBottom: 0,
-  whiteSpace: 'nowrap',
-  overflow: 'hidden',
-  textOverflow: 'ellipsis',
   minWidth: 0,
-  textAlign: 'center',
+  textAlign: "center",
   paddingTop: 0,
-  [theme.breakpoints.down('md')]: {
-    fontSize: '1.50rem',
+  lineHeight: 1.2,
+  wordBreak: "break-word",
+  [theme.breakpoints.down("md")]: {
+    fontSize: "1.30rem",
   },
-  [theme.breakpoints.down('sm')]: {
-    fontSize: '1.3rem',
-    // Add a few pixels of extra space on mobile so the title isn't jammed to the top
+  [theme.breakpoints.down("sm")]: {
+    fontSize: "1.15rem",
     paddingTop: 6,
   },
 }));
 
-export const MapContainer = styled('div')(({ theme }) => ({
-  flexBasis: "67%",
-  flexGrow: 1,
-  flexShrink: 1,
+export const MapContainer = styled("div")({
+  flex: "2 1 0",
+  minWidth: 0,
   minHeight: 200,
-}));
+  borderRadius: 12,
+  overflow: "hidden",
+  position: "relative",
+  isolation: "isolate",
+  // clip-path rounds all 4 corners even for Mapbox's transformed canvas
+  // (overflow: hidden alone doesn't clip transformed descendants on webkit).
+  clipPath: "inset(0 round 12px)",
+});
 
-export const ContactContainer = styled('div')(({ theme }) => ({
+export const ContactContainer = styled("div")({
   display: "flex",
   flexDirection: "row",
   flexWrap: "wrap",
   gap: 20,
-}));
+});
 
-
-
-export const DescriptionWrapper = styled('div')(({ theme }) => ({
+export const DescriptionWrapper = styled("div")({
   display: "flex",
   flexDirection: "column",
   gap: 50,
-
   flexBasis: "55%",
   flexGrow: 1,
-  flexShrink: 0,  
-}));
+  flexShrink: 0,
+});

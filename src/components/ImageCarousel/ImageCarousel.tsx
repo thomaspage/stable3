@@ -62,7 +62,7 @@ const ImageCarousel = ({
             <PreviewImage
               key={img.sys?.id || idx}
               src={`${img.url}?w=200`}
-              onClick={(e) => { e.stopPropagation(); swiperInstance?.slideTo(idx); }}
+              onClick={(e) => { e.stopPropagation(); e.preventDefault(); swiperInstance?.slideTo(idx); }}
             />
           ))}
         </PreviewImages>
