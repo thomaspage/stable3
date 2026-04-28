@@ -74,6 +74,48 @@ export const formatDate = ({
 
 
 /**
+ * Returns the English ordinal suffix for a day-of-month (1 → "st", 2 → "nd",
+ * 3 → "rd", 4-20 → "th", 21 → "st", etc).
+ */
+const getDayOrdinal = (day: number): string => {
+  const v = day % 100;
+  if (v >= 11 && v <= 13) return "th";
+  switch (day % 10) {
+    case 1: return "st";
+    case 2: return "nd";
+    case 3: return "rd";
+    default: return "th";
+  }
+};
+
+/**
+ * Same as formatDate but, for English locales, appends an ordinal suffix to the
+ * day number (e.g. "Jan 15th, 2024" instead of "Jan 15, 2024"). French falls
+ * through to formatDate unchanged since French dates only ordinalise the 1st.
+ */
+export const formatDateWithOrdinal = ({
+  date,
+  language,
+}: {
+  date: Date;
+  language: string;
+}): string => {
+  if (language === "fr") return formatDate({ date, language });
+  try {
+    const parts = new Intl.DateTimeFormat(`${language}-CA`, {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    }).formatToParts(date);
+    return parts
+      .map(p => (p.type === "day" ? `${p.value}${getDayOrdinal(parseInt(p.value, 10))}` : p.value))
+      .join("");
+  } catch {
+    return formatDate({ date, language });
+  }
+};
+
+/**
  * Extracts and formats the month name from a date
  * @param date - The date to extract the month from
  * @param language - Language code for localization (e.g., "en", "fr")

@@ -22,7 +22,6 @@ export const ImageCarouselContainer = styled("div")({
 
 export const Slides = styled(Swiper)({
   display: "flex",
-
   "--swiper-navigation-color": "#333",
 });
 
@@ -32,7 +31,6 @@ export const Slide = styled(SwiperSlide)<{ $clickable: boolean }>(({ $clickable 
   width: "100%",
   position: "relative",
   overflow: "hidden",
-  //   paddingLeft: 20,
 
   ...($clickable && {
     "&:hover::after": {
@@ -54,11 +52,10 @@ export const Image = styled("img")<{$aspectRatio: number}>(({$aspectRatio}) => (
   height: "100%",
   objectFit: "contain",
   aspectRatio: $aspectRatio?.toString(),
-  // zIndex: 1,
-  // position: "relative",
-  // border: "1px solid black",
-  // backgroundColor: "red",
-  //   borderRadius: 10,
+  // Remove the inline-element descender gap that shows as a white strip
+  // beneath the image inside the rounded tile.
+  display: "block",
+  verticalAlign: "bottom",
 }));
 
 export const BlurredImage = styled("img")({

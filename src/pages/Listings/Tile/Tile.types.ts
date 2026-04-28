@@ -26,4 +26,6 @@ export interface TileProps {
   active: boolean;
   /** Whether the listing has been rented */
   rented: boolean;
+  /** YouTube URL — when present, a "Virtual Visit" play badge appears on the tile */
+  videoTourLink?: string;
 }

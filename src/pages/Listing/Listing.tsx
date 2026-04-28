@@ -6,6 +6,7 @@ import {
   LocalAtm,
   LocationOnOutlined,
   NavigateBefore,
+  PlayArrow,
   ShowerOutlined,
   SpaceDashboardOutlined,
 } from "@mui/icons-material";
@@ -14,6 +15,7 @@ import {
   Button,
   Divider,
   ImageListItem,
+  Modal,
   Paper,
   Typography,
   Link as StyledLink,
@@ -319,6 +321,7 @@ const LISTING_QUERY = gql`
       title
       description
       amenities
+      videoTourLink
       bathrooms
       bedrooms
       squareFootage
@@ -341,6 +344,15 @@ const LISTING_QUERY = gql`
     }
   }
 `;
+
+// Parses any common YouTube URL form to a video ID, or null if not a YT link.
+const getYoutubeVideoId = (url: string | null | undefined): string | null => {
+  if (!url) return null;
+  const match = url.match(
+    /(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/|v\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/
+  );
+  return match ? match[1] : null;
+};
 
 /**
  * Defines the grid layout for images based on the number of images
@@ -391,6 +403,7 @@ const Listing = ({ setMode }: { setMode: (mode: PaletteMode) => void }) => {
   const navigate = useNavigate();
 
   const [startIndex, setStartIndex] = useState<number | null>(null);
+  const [videoOpen, setVideoOpen] = useState(false);
 
   const { data, loading } = useQuery(LISTING_QUERY, {
     variables: {
@@ -447,6 +460,10 @@ const Listing = ({ setMode }: { setMode: (mode: PaletteMode) => void }) => {
 
   const imageLayout = getImageLayout(images.length);
 
+  // YouTube video tour — when present, switches the gallery to a hero + 4-grid + video layout.
+  const videoId = getYoutubeVideoId(data.listing.videoTourLink);
+  const videoThumbnail = videoId ? `https://img.youtube.com/vi/${videoId}/hqdefault.jpg` : null;
+
   // Get available date
   const today = new Date();
   const date = new Date(data.listing.availableDate);
@@ -479,27 +496,259 @@ const Listing = ({ setMode }: { setMode: (mode: PaletteMode) => void }) => {
         Back to Listings
       </Button>
 
-      <StyledImageList
-        sx={{ width: "100%" }}
-        variant="quilted"
-        cols={4}
-        rowHeight={100}
-      >
-        {images.slice(0, 5)?.map((item: any, index: number) => (
-          <ImageListItem
-            key={item.sys.id}
-            rows={imageLayout[index][0]}
-            cols={imageLayout[index][1]}
-            onClick={() => setStartIndex(index)}
+      {videoId && images.length >= 1 ? (
+        // Video-tour layout: full-width hero, then a 50/50 split with 4 images
+        // (2x2 grid) on the left and a clickable YouTube thumbnail on the right.
+        <Box sx={{ display: { xs: "none", sm: "flex" }, flexDirection: "column", gap: 1 }}>
+          <Box
+            onClick={() => setStartIndex(0)}
+            sx={{
+              width: "100%",
+              height: 400,
+              overflow: "hidden",
+              borderRadius: "12px",
+              cursor: "pointer",
+              "& img": { width: "100%", height: "100%", objectFit: "cover", display: "block" },
+            }}
           >
-            <img src={item.url} alt={item.title} loading="lazy" />
-          </ImageListItem>
-        ))}
-      </StyledImageList>
+            <img src={images[0].url} alt={images[0].title} loading="lazy" />
+          </Box>
+
+          <Box sx={{ display: "flex", gap: 1, height: 320 }}>
+            <Box
+              sx={{
+                flex: 1,
+                display: "grid",
+                gridTemplateColumns: "1fr 1fr",
+                gridTemplateRows: "1fr 1fr",
+                gap: 1,
+              }}
+            >
+              {images.slice(1, 5).map((item: any, i: number) => (
+                <Box
+                  key={item.sys.id}
+                  onClick={() => setStartIndex(i + 1)}
+                  sx={{
+                    overflow: "hidden",
+                    borderRadius: "12px",
+                    cursor: "pointer",
+                    "& img": { width: "100%", height: "100%", objectFit: "cover", display: "block" },
+                  }}
+                >
+                  <img src={item.url} alt={item.title} loading="lazy" />
+                </Box>
+              ))}
+            </Box>
+
+            <Box
+              onClick={() => setVideoOpen(true)}
+              sx={{
+                flex: 1,
+                position: "relative",
+                overflow: "hidden",
+                borderRadius: "12px",
+                cursor: "pointer",
+                backgroundColor: "#000",
+                "&:hover .play-icon": { transform: "translate(-50%, -50%) scale(1.1)" },
+              }}
+            >
+              {videoThumbnail && (
+                <img
+                  src={videoThumbnail}
+                  alt="Video tour"
+                  loading="lazy"
+                  style={{ width: "100%", height: "100%", objectFit: "cover", display: "block", opacity: 0.85 }}
+                />
+              )}
+              <Box
+                sx={{
+                  position: "absolute",
+                  top: 12,
+                  right: 12,
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 0.5,
+                  bgcolor: "rgba(0, 0, 0, 0.65)",
+                  color: "#fff",
+                  pl: 0.75,
+                  pr: 1.25,
+                  py: 0.5,
+                  borderRadius: 999,
+                  fontSize: "0.8rem",
+                  fontWeight: 700,
+                  letterSpacing: 0.3,
+                  border: "1.5px solid",
+                  borderColor: "primary.main",
+                  pointerEvents: "none",
+                }}
+              >
+                <PlayArrow sx={{ fontSize: 18, color: "primary.main" }} />
+                Virtual Visit
+              </Box>
+              <Box
+                className="play-icon"
+                sx={{
+                  position: "absolute",
+                  top: "50%",
+                  left: "50%",
+                  transform: "translate(-50%, -50%)",
+                  width: 88,
+                  height: 88,
+                  borderRadius: "50%",
+                  backgroundColor: "rgba(0, 0, 0, 0.6)",
+                  border: "2px solid",
+                  borderColor: "primary.main",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  transition: "transform 0.18s ease",
+                  pointerEvents: "none",
+                }}
+              >
+                <PlayArrow sx={{ fontSize: 56, color: "#fff", ml: 0.5 }} />
+              </Box>
+            </Box>
+          </Box>
+        </Box>
+      ) : (
+        <StyledImageList
+          sx={{ width: "100%" }}
+          variant="quilted"
+          cols={4}
+          rowHeight={100}
+        >
+          {images.slice(0, 5)?.map((item: any, index: number) => (
+            <ImageListItem
+              key={item.sys.id}
+              rows={imageLayout[index][0]}
+              cols={imageLayout[index][1]}
+              onClick={() => setStartIndex(index)}
+            >
+              <img src={item.url} alt={item.title} loading="lazy" />
+            </ImageListItem>
+          ))}
+        </StyledImageList>
+      )}
 
       <MobileImageCarousel>
         <StyledImageCarousel images={images} aspectRatio={1.8} showPreviews />
       </MobileImageCarousel>
+
+      {/* Mobile-only video thumbnail — sits between the image carousel and the spotlight */}
+      {videoId && (
+        <Box
+          onClick={() => setVideoOpen(true)}
+          sx={{
+            display: { xs: "block", sm: "none" },
+            position: "relative",
+            width: "100%",
+            paddingTop: "56.25%", // 16:9
+            mt: 1,
+            borderRadius: "12px",
+            overflow: "hidden",
+            cursor: "pointer",
+            backgroundColor: "#000",
+          }}
+        >
+          {videoThumbnail && (
+            <img
+              src={videoThumbnail}
+              alt="Video tour"
+              loading="lazy"
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+                opacity: 0.85,
+              }}
+            />
+          )}
+          <Box
+            sx={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              width: 72,
+              height: 72,
+              borderRadius: "50%",
+              backgroundColor: "rgba(0, 0, 0, 0.6)",
+              border: "2px solid",
+              borderColor: "primary.main",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              pointerEvents: "none",
+            }}
+          >
+            <PlayArrow sx={{ fontSize: 44, color: "#fff", ml: 0.5 }} />
+          </Box>
+          <Box
+            sx={{
+              position: "absolute",
+              top: 10,
+              right: 10,
+              display: "flex",
+              alignItems: "center",
+              gap: 0.5,
+              bgcolor: "rgba(0, 0, 0, 0.65)",
+              color: "#fff",
+              pl: 0.75,
+              pr: 1.25,
+              py: 0.5,
+              borderRadius: 999,
+              fontSize: "0.8rem",
+              fontWeight: 700,
+              letterSpacing: 0.3,
+              border: "1.5px solid",
+              borderColor: "primary.main",
+              pointerEvents: "none",
+            }}
+          >
+            <PlayArrow sx={{ fontSize: 18, color: "primary.main" }} />
+            Virtual Visit
+          </Box>
+        </Box>
+      )}
+
+      <Modal
+        open={videoOpen}
+        onClose={() => setVideoOpen(false)}
+        sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}
+      >
+        <Container maxWidth="lg" sx={{ outline: "none" }}>
+          <Box
+            sx={{
+              position: "relative",
+              width: "100%",
+              paddingTop: "56.25%", // 16:9 aspect ratio
+              borderRadius: "12px",
+              overflow: "hidden",
+              backgroundColor: "#000",
+            }}
+          >
+            {videoId && videoOpen && (
+              <iframe
+                src={`https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`}
+                title="Video tour"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  width: "100%",
+                  height: "100%",
+                  border: 0,
+                }}
+              />
+            )}
+          </Box>
+        </Container>
+      </Modal>
 
       <ImageCarouselModal
         open={startIndex !== null}
@@ -515,6 +764,7 @@ const Listing = ({ setMode }: { setMode: (mode: PaletteMode) => void }) => {
             images={images}
             aspectRatio={1.8}
             showPreviews
+            popup
             startIndex={startIndex || 0}
           />
         </Container>
@@ -631,7 +881,7 @@ const Listing = ({ setMode }: { setMode: (mode: PaletteMode) => void }) => {
         <DescriptionWrapper>
           {data.listing.description && (
             <DescriptionContainer style={{ maxWidth: "100%" }}>
-              <Typography variant="h5">{t("common.description")}</Typography>
+              <Typography variant="h5" sx={{ fontWeight: 700 }}>{t("common.description")}</Typography>
               <Typography
                 variant="body1"
                 style={{ whiteSpace: "preserve-breaks" }}
@@ -640,39 +890,6 @@ const Listing = ({ setMode }: { setMode: (mode: PaletteMode) => void }) => {
               </Typography>
             </DescriptionContainer>
           )}
-          <ContactContainer>
-            <Button
-              variant="contained"
-              size="large"
-              color="primary"
-              disableElevation
-              onClick={() => navigate(`/listings/${id}/book`)}
-              sx={{ height: 48, padding: "10px 24px", fontSize: "1rem", textTransform: 'uppercase', boxSizing: "border-box", border: "1px solid transparent" }}
-            >
-              {"BOOK A VISIT"}
-            </Button>
-
-            <Button
-              variant="contained"
-              size="large"
-              disableElevation
-              href={EXTERNAL_URLS.GOOGLE_FORM}
-              target="_blank"
-              sx={{ textTransform: 'uppercase', height: 48, padding: "10px 24px", fontSize: "1rem", boxSizing: "border-box", border: "1px solid transparent" }}
-            >
-              {String(t("common.apply")).toUpperCase()}
-            </Button>
-
-            <Button
-              startIcon={<Help />}
-              variant="outlined"
-              size="large"
-              href={EXTERNAL_URLS.EMAIL}
-              sx={{ height: 48, padding: "10px 24px", fontSize: "1rem", boxSizing: "border-box" }}
-            >
-              {EXTERNAL_URLS.EMAIL_ADDRESS}
-            </Button>
-          </ContactContainer>
         </DescriptionWrapper>
 
         {data.listing.amenities && (() => {
@@ -701,7 +918,7 @@ const Listing = ({ setMode }: { setMode: (mode: PaletteMode) => void }) => {
 
           return (
             <AmenitiesContainer>
-              <Typography variant="h5">{t("common.details")}</Typography>
+              <Typography variant="h5" sx={{ fontWeight: 700 }}>{t("common.details")}</Typography>
               {renderSection("Inclusions / Exclusions", inclusions)}
               {renderSection("Pet Policy", pets)}
               {renderSection("Additional Features", features)}
@@ -709,6 +926,40 @@ const Listing = ({ setMode }: { setMode: (mode: PaletteMode) => void }) => {
           );
         })()}
       </BodyContainer>
+
+      <ContactContainer style={{ padding: "0 10px 60px", justifyContent: "center" }}>
+        <Button
+          variant="contained"
+          size="large"
+          color="primary"
+          disableElevation
+          onClick={() => navigate(`/listings/${id}/book`)}
+          sx={{ height: 48, padding: "10px 24px", fontSize: "1rem", textTransform: "uppercase", boxSizing: "border-box", border: "1px solid transparent" }}
+        >
+          {"BOOK A VISIT"}
+        </Button>
+
+        <Button
+          variant="contained"
+          size="large"
+          disableElevation
+          href={EXTERNAL_URLS.GOOGLE_FORM}
+          target="_blank"
+          sx={{ textTransform: "uppercase", height: 48, padding: "10px 24px", fontSize: "1rem", boxSizing: "border-box", border: "1px solid transparent" }}
+        >
+          {String(t("common.apply")).toUpperCase()}
+        </Button>
+
+        <Button
+          startIcon={<Help />}
+          variant="outlined"
+          size="large"
+          href={EXTERNAL_URLS.EMAIL}
+          sx={{ height: 48, padding: "10px 24px", fontSize: "1rem", boxSizing: "border-box" }}
+        >
+          {EXTERNAL_URLS.EMAIL_ADDRESS}
+        </Button>
+      </ContactContainer>
     </ListingContainer>
   );
 };

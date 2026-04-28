@@ -6,7 +6,8 @@ import Popup from "./Popup";
 import { MapProps } from "./Map.types";
 import ImageCarousel from "../ImageCarousel";
 import { Link } from "react-router-dom";
-import { formatCurrency, formatDate } from "../../utils";
+import { formatCurrency, formatDateWithOrdinal } from "../../utils";
+import PlayArrow from "@mui/icons-material/PlayArrow";
 import { useTranslation } from "react-i18next";
 import { Paper, Typography, useTheme, Box, Button } from "@mui/material";
 import ArrowForward from '@mui/icons-material/ArrowForward';
@@ -170,9 +171,7 @@ const Map = ({ features, onPopupClick, allowMarkerPopups = true }: MapProps) => 
           formattedAvailable =
             d < today
               ? t("common.availableNow")
-              : t("common.availableDate", {
-                  date: formatDate({ date: utcDate, language }),
-                });
+              : formatDateWithOrdinal({ date: utcDate, language });
         }
 
         const popupObj = {
@@ -202,18 +201,60 @@ const Map = ({ features, onPopupClick, allowMarkerPopups = true }: MapProps) => 
                   <Box className="popup-carousel" sx={{ overflow: 'hidden', borderRadius: 1 }}>
                     <ImageCarousel
                       images={feature.images}
-                      popup
                       showPreviews={false}
                       aspectRatio={1.6}
                     />
                   </Box>
                 )}
+
+                {/* Virtual Visit badge — only shown when a YouTube link exists. */}
+                {feature.videoTourLink && (
+                  <Link to={`/listings/${feature.id}`} style={{ textDecoration: 'none' }}>
+                    <Box
+                      sx={{
+                        position: 'absolute',
+                        bottom: 8,
+                        right: 8,
+                        zIndex: 3,
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 0.5,
+                        bgcolor: 'rgba(0, 0, 0, 0.65)',
+                        color: '#fff',
+                        pl: 0.75,
+                        pr: 1.25,
+                        py: 0.5,
+                        borderRadius: 999,
+                        cursor: 'pointer',
+                        fontSize: '0.8rem',
+                        fontWeight: 700,
+                        letterSpacing: 0.3,
+                        border: '1.5px solid',
+                        borderColor: 'primary.main',
+                      }}
+                    >
+                      <PlayArrow sx={{ fontSize: 18, color: 'primary.main' }} />
+                      Virtual Visit
+                    </Box>
+                  </Link>
+                )}
               </Box>
 
               <Box sx={{ mt: 1 }}>
-                <Typography variant="h6" sx={{ fontWeight: 700, fontSize: '1.3rem', textAlign: 'center' }}>
-                  {feature.title}
-                </Typography>
+                <Link to={`/listings/${feature.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                  <Typography
+                    variant="h6"
+                    sx={{
+                      fontWeight: 700,
+                      fontSize: '1.3rem',
+                      textAlign: 'center',
+                      cursor: 'pointer',
+                      '&:hover': { textDecoration: 'underline' },
+                    }}
+                  >
+                    {feature.title}
+                  </Typography>
+                </Link>
                 {feature.description && (
                   <Typography variant="body2" sx={{ mt: 0.5, textAlign: 'center', fontSize: '0.8rem' }}>
                     {feature.description}

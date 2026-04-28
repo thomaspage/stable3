@@ -86,6 +86,7 @@ const LISTINGS_QUERY = gql`
         price
         rented
         amenities
+        videoTourLink
         availableDate
         shortKeyDescription
         imagesCollection {
@@ -225,6 +226,7 @@ const Listings = ({ setMode }: { setMode: (mode: PaletteMode) => void }) => {
           squareFootage: listing.squareFootage,
           address: listing.city,
           availableDate: listing.availableDate,
+          videoTourLink: listing.videoTourLink,
         };
       })
       .filter(Boolean);
@@ -386,6 +388,7 @@ const Listings = ({ setMode }: { setMode: (mode: PaletteMode) => void }) => {
                                 bedrooms={listing.bedrooms}
                                 squareFootage={listing.squareFootage}
                                 price={listing.price}
+                                videoTourLink={listing.videoTourLink}
                                 images={listing.imagesCollection.items.filter(
                                   (x: any) => x
                                 )}

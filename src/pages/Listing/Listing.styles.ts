@@ -29,7 +29,7 @@ export const BodyContainer = styled("div")({
   display: "flex",
   gap: 50,
   flexWrap: "wrap",
-  marginBottom: 100,
+  marginBottom: 36,
 });
 
 export const DescriptionContainer = styled("div")({});
@@ -54,7 +54,8 @@ export const TitleWithMap = styled("div")(({ theme }) => ({
   flexDirection: "row",
   flexWrap: "nowrap",
   alignItems: "stretch",
-  gap: 24,
+  gap: 8,
+  marginTop: 8,
   marginBottom: 20,
 
   // On narrower screens, stack the map below the spotlight so the title

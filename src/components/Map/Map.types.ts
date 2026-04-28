@@ -25,6 +25,8 @@ export interface Feature {
     squareFootage?: number;
     address?: string;
     availableDate?: string;
+    /** YouTube URL — when present, a "Virtual Visit" badge appears on the popup. */
+    videoTourLink?: string;
 }
 
 /**

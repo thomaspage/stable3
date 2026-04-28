@@ -2,6 +2,9 @@ import Header from "components/Header";
 import { useTranslation } from "react-i18next";
 import { useState, useMemo, FormEvent } from "react";
 import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
   Alert,
   AlertColor,
   Button,
@@ -24,9 +27,11 @@ import {
   Divider,
   Checkbox,
   Snackbar,
+  useMediaQuery,
   useTheme,
 } from "@mui/material";
 import CheckCircleOutline from "@mui/icons-material/CheckCircleOutline";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import {
   BedOutlined,
   ShowerOutlined,
@@ -100,13 +105,13 @@ const DateStepper = ({
       {label}
     </Typography>
     <Box sx={{ display: "flex", alignItems: "center" }}>
-      <IconButton size="small" onClick={onDecrement} sx={{ p: 0.5 }}>
+      <IconButton size="small" onClick={onDecrement} sx={{ p: { xs: 0, sm: 0.5 } }}>
         <KeyboardArrowLeft fontSize="small" />
       </IconButton>
-      <Typography sx={{ minWidth: 90, textAlign: "center", fontWeight: 600, fontSize: "1rem" }}>
+      <Typography sx={{ minWidth: { xs: 56, sm: 90 }, textAlign: "center", color: "primary.main", fontSize: { xs: "0.9rem", sm: "1rem" } }}>
         {display}
       </Typography>
-      <IconButton size="small" onClick={onIncrement} sx={{ p: 0.5 }}>
+      <IconButton size="small" onClick={onIncrement} sx={{ p: { xs: 0, sm: 0.5 } }}>
         <KeyboardArrowRight fontSize="small" />
       </IconButton>
     </Box>
@@ -118,6 +123,7 @@ const Booking = ({ setMode }: { setMode: (mode: PaletteMode) => void }) => {
   const { t, i18n: { language } } = useTranslation();
   const { id } = useParams();
   const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const occupantTypesList = [
     "Myself", "Spouse/Partner", "Friend", "Child",
@@ -136,12 +142,19 @@ const Booking = ({ setMode }: { setMode: (mode: PaletteMode) => void }) => {
 
   // Date stepper — initialise to today so arrows feel immediate
   const today = new Date();
-  const [dateDay, setDateDay] = useState(today.getDate());
-  const [dateMonth, setDateMonth] = useState(today.getMonth() + 1); // 1-based
-  const [dateYear, setDateYear] = useState(today.getFullYear());
+  // Date steppers start empty (null) so the user is forced to interact with the
+  // arrows. The first arrow click on each field initialises it to today's value
+  // for that field; subsequent clicks increment / decrement normally.
+  const [dateDay, setDateDay] = useState<number | null>(null);
+  const [dateMonth, setDateMonth] = useState<number | null>(null);
+  const [dateYear, setDateYear] = useState<number | null>(null);
 
-  const maxDay = new Date(dateYear, dateMonth, 0).getDate(); // last day of current month
-  const moveDate = `${dateYear}-${String(dateMonth).padStart(2, "0")}-${String(dateDay).padStart(2, "0")}`;
+  const allDateSet = dateDay !== null && dateMonth !== null && dateYear !== null;
+  const maxDay = new Date(
+    dateYear ?? today.getFullYear(),
+    dateMonth ?? today.getMonth() + 1,
+    0,
+  ).getDate();
 
   const [reasonForMove, setReasonForMove] = useState("");
 
@@ -151,6 +164,7 @@ const Booking = ({ setMode }: { setMode: (mode: PaletteMode) => void }) => {
     { ...EMPTY_LEASE_HOLDER },
   ]);
 
+  const [hasAnimals, setHasAnimals] = useState(""); // "" forces the user to pick yes/no
   const [dogCount, setDogCount] = useState(0);
   const [catCount, setCatCount] = useState(0);
   const [otherAnimalCount, setOtherAnimalCount] = useState(0);
@@ -242,14 +256,14 @@ const Booking = ({ setMode }: { setMode: (mode: PaletteMode) => void }) => {
       return;
     }
 
-    if (!moveDate) {
-      showSnack("error", "Please enter a requested moving date.");
+    if (!allDateSet) {
+      showSnack("error", "Please choose a requested move-in date — use the arrows to set Day, Month, and Year.");
       return;
     }
 
     // Reject move-in dates that land before today (stripped to midnight so a
     // selection of "today" is valid regardless of the current time of day).
-    const selectedDate = new Date(dateYear, dateMonth - 1, dateDay);
+    const selectedDate = new Date(dateYear!, dateMonth! - 1, dateDay!);
     const todayMidnight = new Date(today.getFullYear(), today.getMonth(), today.getDate());
     if (selectedDate < todayMidnight) {
       showSnack("error", "The requested move-in date must be today or later.");
@@ -295,6 +309,20 @@ const Booking = ({ setMode }: { setMode: (mode: PaletteMode) => void }) => {
       return;
     }
 
+    if (!hasAnimals) {
+      showSnack("error", "Please indicate whether any animals will live in with the occupants.");
+      return;
+    }
+    const totalAnimals = dogCount + catCount + otherAnimalCount;
+    if (hasAnimals === "no" && totalAnimals > 0) {
+      showSnack("error", "You answered \"No\" to animals but added a dog, cat, or other animal. Please reconcile before submitting.");
+      return;
+    }
+    if (hasAnimals === "yes" && totalAnimals === 0) {
+      showSnack("error", "You answered \"Yes\" to animals — please indicate at least one dog, cat, or other animal.");
+      return;
+    }
+
     if (!smokerAny) {
       showSnack("error", "Please indicate whether any of the occupants are smokers.");
       return;
@@ -302,10 +330,16 @@ const Booking = ({ setMode }: { setMode: (mode: PaletteMode) => void }) => {
 
     const listingTitle = listingData?.listing?.title || id || "Unit";
     const listingAddress = displayAddress || "";
-    const subject = `${listingTitle}${listingAddress ? " - " + listingAddress : ""} Visit Request`;
+    const subject = `${listingTitle} Visit Request`;
+    // Clickable Google Maps link — pin coordinates if available, otherwise the address text.
+    const locationLink = resolvedLocation
+      ? `https://maps.google.com/?q=${resolvedLocation.lat},${resolvedLocation.lon}`
+      : listingAddress
+      ? `https://maps.google.com/?q=${encodeURIComponent(listingAddress)}`
+      : "";
 
     const locale = language === "fr" ? "fr-CA" : "en-CA";
-    const moveDateObj = new Date(dateYear, dateMonth - 1, dateDay);
+    const moveDateObj = new Date(dateYear!, dateMonth! - 1, dateDay!);
     const humanMoveDate = moveDateObj.toLocaleDateString(locale, {
       weekday: "long", year: "numeric", month: "long", day: "numeric",
     });
@@ -353,7 +387,8 @@ const Booking = ({ setMode }: { setMode: (mode: PaletteMode) => void }) => {
       .join("\n\n");
 
     const payload = {
-      "Listing":               listingAddress ? `${listingTitle} — ${listingAddress}` : listingTitle,
+      "Listing":               listingTitle,
+      "Location":              locationLink || "(no map link available)",
       "Applicant Email":       email,
       "Requested Move-In":     humanMoveDate,
       "Reason for the Move":   reasonForMove.trim(),
@@ -490,7 +525,7 @@ const Booking = ({ setMode }: { setMode: (mode: PaletteMode) => void }) => {
 
             {/* Map — explicit height so Mapbox renders; overlay opens Google Maps on click */}
             {features && (
-              <Box sx={{ borderRadius: 3, overflow: "hidden", position: "relative", height: 260, flexShrink: 0 }}>
+              <Box sx={{ borderRadius: 3, overflow: "hidden", position: "relative", height: { xs: 170, sm: 260 }, flexShrink: 0 }}>
                 <Map features={features} allowMarkerPopups={false} />
                 {googleMapsUrl && (
                   <Box
@@ -508,11 +543,23 @@ const Booking = ({ setMode }: { setMode: (mode: PaletteMode) => void }) => {
         </Box>
       )}
 
-      <form onSubmit={handleSubmit}>
+      <Box
+        component="form"
+        onSubmit={handleSubmit}
+        sx={{
+          // Answers in brand orange (regular weight; only questions are bold).
+          "& .MuiInputBase-input": { color: "primary.main" },
+          "& .MuiSelect-select": { color: "primary.main" },
+          // Placeholder hints share the same orange so they don't read as yellow.
+          "& .MuiInputBase-input::placeholder": { color: "primary.main", opacity: 0.65 },
+          // HelperText hints in orange too — except validation errors which stay red.
+          "& .MuiFormHelperText-root:not(.Mui-error)": { color: "primary.main" },
+        }}
+      >
 
         <FormRow>
-          <Typography style={{ color: theme.palette.primary.main, fontWeight: 600 }}>
-            E-mail{" "}
+          <Typography style={{ color: theme.palette.text.primary, fontWeight: 600 }}>
+            1. <span style={{ textDecoration: "underline" }}>E-mail</span>{" "}
             <span style={{ fontWeight: 400, fontSize: "0.88rem" }}>
               (We will e-mail you to schedule a visit quickly after receiving this short form)
             </span>
@@ -525,26 +572,30 @@ const Booking = ({ setMode }: { setMode: (mode: PaletteMode) => void }) => {
             onChange={(e) => setEmail(e.target.value)}
             onBlur={() => setEmailTouched(true)}
             error={emailInvalid}
-            helperText={emailInvalid ? "Please enter a valid e-mail address." : " "}
+            helperText={emailInvalid ? "Please enter a valid e-mail address." : undefined}
           />
         </FormRow>
 
         <FormRow>
-          <Typography style={{ color: theme.palette.primary.main, fontWeight: 600 }}>
-            Describe and include all occupants{" "}
+          <Typography style={{ color: theme.palette.text.primary, fontWeight: 600 }}>
+            2. <span style={{ textDecoration: "underline" }}>Describe and include all occupants and their relationship</span>{" "}
             <span style={{ fontWeight: 400, fontSize: "0.88rem" }}>
-              (People who will be <u>living</u> in the premises, co-signers, to be added later)
+              (People who will be <u>living</u> in the premises, co-signers will be added later)
             </span>
           </Typography>
-          <Grid container spacing={1}>
-            {Object.keys(occupantCounts).map((type) => (
+          {(() => {
+            const topOccupantTypes = ["Myself", "Spouse/Partner", "Friend"];
+            const familyOccupantTypes = ["Child", "Mother", "Father", "Brother", "Sister", "Cousin"];
+            const otherOccupantTypes = ["Other"];
+
+            const renderOccupantCell = (type: string) => (
               <Grid item xs={12} sm={6} md={4} key={type}>
                 <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                   <Typography style={{ flex: 1 }}>{type}</Typography>
                   <IconButton size="small" sx={{ color: theme.palette.primary.main }} onClick={() => setOccupantCounts(prev => ({ ...prev, [type]: Math.max(0, prev[type] - 1) }))}>
                     <RemoveIcon />
                   </IconButton>
-                  <Typography>{occupantCounts[type]}</Typography>
+                  <Typography sx={{ color: occupantCounts[type] > 0 ? "primary.main" : "text.primary" }}>{occupantCounts[type]}</Typography>
                   <IconButton size="small" sx={{ color: theme.palette.primary.main }} onClick={() => setOccupantCounts(prev => ({ ...prev, [type]: prev[type] + 1 }))}>
                     <AddIcon />
                   </IconButton>
@@ -553,53 +604,110 @@ const Booking = ({ setMode }: { setMode: (mode: PaletteMode) => void }) => {
                   <TextField placeholder="Describe other occupants" value={occupantOtherText} onChange={(e) => setOccupantOtherText(e.target.value)} sx={{ marginTop: 1 }} />
                 )}
               </Grid>
-            ))}
-          </Grid>
+            );
+
+            // Sum of family counts — shown next to the "Family" label so users
+            // know at a glance how many family members they've added when collapsed.
+            const familyTotal = familyOccupantTypes.reduce((sum, t) => sum + (occupantCounts[t] || 0), 0);
+
+            return (
+              <>
+                <Grid container spacing={1} sx={{ pl: 4 }}>
+                  {topOccupantTypes.map(renderOccupantCell)}
+                </Grid>
+
+                <Accordion
+                  disableGutters
+                  elevation={0}
+                  defaultExpanded={!isMobile}
+                  sx={{
+                    mt: 1,
+                    pl: 4,
+                    background: "transparent",
+                    "&::before": { display: "none" },
+                  }}
+                >
+                  <AccordionSummary
+                    expandIcon={<ExpandMoreIcon sx={{ color: "primary.main" }} />}
+                    sx={{ px: 0, minHeight: "unset" }}
+                  >
+                    <Typography sx={{ fontWeight: 600 }}>
+                      Family Member{familyTotal > 0 && (
+                        <Typography component="span" sx={{ ml: 0.75, color: "primary.main", fontWeight: 600 }}>
+                          ({familyTotal})
+                        </Typography>
+                      )}
+                    </Typography>
+                  </AccordionSummary>
+                  <AccordionDetails sx={{ px: 0, pt: 0, pb: 1.5 }}>
+                    <Grid container spacing={1} sx={{ pl: 2 }}>
+                      {familyOccupantTypes.map(renderOccupantCell)}
+                    </Grid>
+                  </AccordionDetails>
+                </Accordion>
+
+                <Grid container spacing={1} sx={{ pl: 4 }}>
+                  {otherOccupantTypes.map(renderOccupantCell)}
+                </Grid>
+              </>
+            );
+          })()}
         </FormRow>
 
         {/* Date picker with left/right arrow steppers */}
         <FormRow>
-          <Typography style={{ color: theme.palette.primary.main, fontWeight: 600 }}>
-            Requested moving date{" "}
+          <Typography style={{ color: theme.palette.text.primary, fontWeight: 600 }}>
+            3. <span style={{ textDecoration: "underline" }}>Requested moving date</span>{" "}
             <span style={{ fontWeight: 400, fontSize: "0.88rem" }}>(Earliest move-in date possible)</span>
           </Typography>
-          <Box sx={{ display: "flex", gap: 3, alignItems: "center", flexWrap: "wrap" }}>
+          <Box sx={{ display: "flex", gap: { xs: 0.5, sm: 3 }, alignItems: "center", flexWrap: "nowrap", justifyContent: { xs: "space-between", sm: "flex-start" } }}>
             <DateStepper
               label="Day"
-              display={String(dateDay)}
-              onDecrement={() => setDateDay(d => d <= 1 ? maxDay : d - 1)}
-              onIncrement={() => setDateDay(d => d >= maxDay ? 1 : d + 1)}
+              display={dateDay !== null ? String(dateDay) : "—"}
+              onDecrement={() => setDateDay(d => d === null ? today.getDate() : d <= 1 ? maxDay : d - 1)}
+              onIncrement={() => setDateDay(d => d === null ? today.getDate() : d >= maxDay ? 1 : d + 1)}
             />
             <DateStepper
               label="Month"
-              display={MONTHS_FULL[dateMonth - 1]}
-              onDecrement={() => setDateMonth(m => m <= 1 ? 12 : m - 1)}
-              onIncrement={() => setDateMonth(m => m >= 12 ? 1 : m + 1)}
+              display={dateMonth !== null ? MONTHS_FULL[dateMonth - 1] : "—"}
+              onDecrement={() => setDateMonth(m => m === null ? today.getMonth() + 1 : m <= 1 ? 12 : m - 1)}
+              onIncrement={() => setDateMonth(m => m === null ? today.getMonth() + 1 : m >= 12 ? 1 : m + 1)}
             />
             <DateStepper
               label="Year"
-              display={String(dateYear)}
-              onDecrement={() => setDateYear(y => Math.max(today.getFullYear(), y - 1))}
-              onIncrement={() => setDateYear(y => y + 1)}
+              display={dateYear !== null ? String(dateYear) : "—"}
+              onDecrement={() => setDateYear(y => y === null ? today.getFullYear() : Math.max(today.getFullYear(), y - 1))}
+              onIncrement={() => setDateYear(y => y === null ? today.getFullYear() : y + 1)}
             />
           </Box>
         </FormRow>
 
         <FormRow>
-          <Typography style={{ color: theme.palette.primary.main, fontWeight: 600 }}>What is the reason for the move?</Typography>
+          <Typography style={{ color: theme.palette.text.primary, fontWeight: 600 }}>4. <span style={{ textDecoration: "underline" }}>What is the reason for the move?</span></Typography>
           <TextField value={reasonForMove} onChange={(e) => setReasonForMove(e.target.value)} multiline rows={2} />
         </FormRow>
 
         {/* Lease-holders: role dropdown first, then name / occupation / income on one line */}
         <FormRow>
-          <Typography style={{ color: theme.palette.primary.main, fontWeight: 600 }}>
-            Who will sign the lease?{" "}
+          <Typography style={{ color: theme.palette.text.primary, fontWeight: 600 }}>
+            5. <span style={{ textDecoration: "underline" }}>Who will sign the lease?</span>{" "}
             <span style={{ fontWeight: 400, fontSize: "0.88rem" }}>
               (List all signing tenants and co-signers, if any)
-            </span> 
+            </span>
           </Typography>
-          {leaseHolders.map((lh, index) => (
+          {(() => {
+            // Number each row by counting prior occurrences of its role:
+            // Tenant 1 → Co-signer 1 → Tenant 2 → Co-signer 2, etc.
+            const counts: Record<string, number> = { tenant: 0, "co-signer": 0 };
+            return leaseHolders.map((lh, index) => {
+              counts[lh.role] = (counts[lh.role] || 0) + 1;
+              const roleLabel = lh.role === "tenant" ? "Tenant" : "Co-signer";
+              const numberedLabel = `${roleLabel} ${counts[lh.role]}`;
+              return (
             <Box key={index} sx={{ mb: 1.5 }}>
+              <Typography sx={{ fontWeight: 600, fontSize: "0.95rem", mb: 0.5 }}>
+                {numberedLabel}
+              </Typography>
               <Box sx={{ display: "flex", gap: 1, alignItems: "center", flexWrap: "wrap" }}>
                 {/* Role dropdown — leftmost */}
                 <Select
@@ -614,7 +722,7 @@ const Booking = ({ setMode }: { setMode: (mode: PaletteMode) => void }) => {
 
                 <TextField
                   size="small"
-                  placeholder="Name"
+                  placeholder="Full name"
                   value={lh.name}
                   onChange={(e) => updateLeaseHolder(index, "name", e.target.value)}
                   sx={{ flex: 2, minWidth: 110 }}
@@ -657,45 +765,71 @@ const Booking = ({ setMode }: { setMode: (mode: PaletteMode) => void }) => {
                 />
               )}
             </Box>
-          ))}
+              );
+            });
+          })()}
           <Button
             startIcon={<AddIcon />}
             onClick={() => setLeaseHolders(prev => [...prev, { ...EMPTY_LEASE_HOLDER }])}
             sx={{ textTransform: "none", alignSelf: "flex-start", mt: 0.5 }}
           >
-            Add lease-holder
+            Add Tenant or Co-signer
           </Button>
         </FormRow>
 
         <FormRow>
-          <Typography style={{ color: theme.palette.primary.main, fontWeight: 600 }}>Animals</Typography>
-          <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-              <Typography style={{ width: 60 }}>Dog</Typography>
-              <IconButton size="small" sx={{ color: theme.palette.primary.main }} onClick={() => setDogCount(Math.max(0, dogCount - 1))}><RemoveIcon /></IconButton>
-              <Typography>{dogCount}</Typography>
-              <IconButton size="small" sx={{ color: theme.palette.primary.main }} onClick={() => setDogCount(dogCount + 1)}><AddIcon /></IconButton>
-            </div>
-            <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-              <Typography style={{ width: 60 }}>Cat</Typography>
-              <IconButton size="small" sx={{ color: theme.palette.primary.main }} onClick={() => setCatCount(Math.max(0, catCount - 1))}><RemoveIcon /></IconButton>
-              <Typography>{catCount}</Typography>
-              <IconButton size="small" sx={{ color: theme.palette.primary.main }} onClick={() => setCatCount(catCount + 1)}><AddIcon /></IconButton>
-            </div>
-            <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-              <Typography style={{ width: 60 }}>Other</Typography>
-              <IconButton size="small" sx={{ color: theme.palette.primary.main }} onClick={() => setOtherAnimalCount(Math.max(0, otherAnimalCount - 1))}><RemoveIcon /></IconButton>
-              <Typography>{otherAnimalCount}</Typography>
-              <IconButton size="small" sx={{ color: theme.palette.primary.main }} onClick={() => setOtherAnimalCount(otherAnimalCount + 1)}><AddIcon /></IconButton>
-            </div>
-          </div>
-          {otherAnimalCount > 0 && (
-            <TextField placeholder="Describe other animals" value={otherAnimalText} onChange={(e) => setOtherAnimalText(e.target.value)} />
+          <Typography style={{ color: theme.palette.text.primary, fontWeight: 600 }}>
+            6. <span style={{ textDecoration: "underline" }}>Will any animals live in with the occupants?</span>
+          </Typography>
+          <RadioGroup
+            row
+            value={hasAnimals}
+            onChange={(e) => {
+              const v = e.target.value;
+              setHasAnimals(v);
+              // Reset counters when the user says "No" so there can be no conflict.
+              if (v === "no") {
+                setDogCount(0);
+                setCatCount(0);
+                setOtherAnimalCount(0);
+                setOtherAnimalText("");
+              }
+            }}
+          >
+            <FormControlLabel value="yes" control={<Radio size="small" />} label="Yes" />
+            <FormControlLabel value="no" control={<Radio size="small" />} label="No" />
+          </RadioGroup>
+          {hasAnimals === "yes" && (
+            <>
+              <div style={{ display: "flex", flexDirection: "column", gap: 6, paddingLeft: 32 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                  <Typography style={{ width: 60 }}>Dog</Typography>
+                  <IconButton size="small" sx={{ color: theme.palette.primary.main }} onClick={() => setDogCount(Math.max(0, dogCount - 1))}><RemoveIcon /></IconButton>
+                  <Typography sx={{ color: dogCount > 0 ? "primary.main" : "text.primary" }}>{dogCount}</Typography>
+                  <IconButton size="small" sx={{ color: theme.palette.primary.main }} onClick={() => setDogCount(dogCount + 1)}><AddIcon /></IconButton>
+                </div>
+                <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                  <Typography style={{ width: 60 }}>Cat</Typography>
+                  <IconButton size="small" sx={{ color: theme.palette.primary.main }} onClick={() => setCatCount(Math.max(0, catCount - 1))}><RemoveIcon /></IconButton>
+                  <Typography sx={{ color: catCount > 0 ? "primary.main" : "text.primary" }}>{catCount}</Typography>
+                  <IconButton size="small" sx={{ color: theme.palette.primary.main }} onClick={() => setCatCount(catCount + 1)}><AddIcon /></IconButton>
+                </div>
+                <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                  <Typography style={{ width: 60 }}>Other</Typography>
+                  <IconButton size="small" sx={{ color: theme.palette.primary.main }} onClick={() => setOtherAnimalCount(Math.max(0, otherAnimalCount - 1))}><RemoveIcon /></IconButton>
+                  <Typography sx={{ color: otherAnimalCount > 0 ? "primary.main" : "text.primary" }}>{otherAnimalCount}</Typography>
+                  <IconButton size="small" sx={{ color: theme.palette.primary.main }} onClick={() => setOtherAnimalCount(otherAnimalCount + 1)}><AddIcon /></IconButton>
+                </div>
+              </div>
+              {otherAnimalCount > 0 && (
+                <TextField placeholder="Describe other animals" value={otherAnimalText} onChange={(e) => setOtherAnimalText(e.target.value)} />
+              )}
+            </>
           )}
         </FormRow>
 
         <FormRow>
-          <Typography style={{ color: theme.palette.primary.main, fontWeight: 600 }}>Are any of the occupants smokers?</Typography>
+          <Typography style={{ color: theme.palette.text.primary, fontWeight: 600 }}>7. <span style={{ textDecoration: "underline" }}>Are any of the occupants smokers?</span></Typography>
           <RadioGroup row value={smokerAny} onChange={(e) => setSmokerAny(e.target.value)}>
             <FormControlLabel value="yes" control={<Radio />} label="Yes" />
             <FormControlLabel value="no" control={<Radio />} label="No" />
@@ -703,14 +837,14 @@ const Booking = ({ setMode }: { setMode: (mode: PaletteMode) => void }) => {
         </FormRow>
 
         <FormRow>
-          <Typography style={{ color: theme.palette.primary.main, fontWeight: 600 }}>Additional information, details or questions?</Typography>
+          <Typography style={{ color: theme.palette.text.primary, fontWeight: 600 }}>8. <span style={{ textDecoration: "underline" }}>Additional information, details or questions?</span></Typography>
           <TextField value={additional} onChange={(e) => setAdditional(e.target.value)} multiline rows={4} />
         </FormRow>
 
         <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
           <Button type="submit" variant="contained" sx={{ textTransform: "uppercase" }}>SEND VISIT REQUEST</Button>
         </Box>
-      </form>
+      </Box>
 
       {/* Validation + soft-error snackbar */}
       <Snackbar
